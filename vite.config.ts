@@ -33,24 +33,7 @@ export default defineConfig(({ mode }) => {
   };
 
   return {
-    plugins: [
-      react(),
-      tailwindCssConfig(),
-      ...(env.VITE_ENV === "production" && env.SENTRY_TOKEN
-        ? [
-            sentryVitePlugin({
-              org: "the-kanchi-kitchen",
-              project: "restaurant-app",
-              authToken: env.SENTRY_TOKEN,
-              sourcemaps: {
-                assets: "./dist/assets",
-                ignore: ["node_modules"],
-                filesToDeleteAfterUpload: "dist/assets/**/*.map",
-              },
-            }),
-          ]
-        : []),
-    ],
+    plugins: [react(), tailwindCssConfig()],
     test: {
       globals: true,
       environment: "jsdom",
