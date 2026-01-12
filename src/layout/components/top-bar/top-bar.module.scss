@@ -1,0 +1,33 @@
+@use "@shared/styles/colors.module.scss" as *;
+@use "sass:color";
+
+.mainContainer {
+  background-color: $primary;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  box-shadow: 10px 3px 10px #888888;
+  padding: 5px 10px;
+  justify-content: space-between;
+
+  .homeIcon,
+  .dropIcon {
+    cursor: pointer;
+    border: none;
+    outline: none;
+    &:active {
+      border: none;
+    }
+  }
+
+  .leftContent {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+
+    .userName {
+      color: $white;
+      margin-right: 10px;
+    }
+  }
+}

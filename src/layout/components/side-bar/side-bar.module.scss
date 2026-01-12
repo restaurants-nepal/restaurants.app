@@ -1,0 +1,31 @@
+@use "@shared/styles/colors.module.scss" as *;
+
+.sideBarContainer {
+  background-color: $primary-dark;
+  height: calc(100vh - 30px);
+  width: 150px;
+
+  .imageContainer {
+    display: flex;
+    margin: 10px;
+    justify-content: center;
+  }
+
+  .logo {
+    border-radius: 50%; // this make circle
+  }
+}
+
+.menuItemContainer {
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+}
+
+.navItem {
+  display: flex;
+  gap: 10px;
+  margin: 10px;
+}
