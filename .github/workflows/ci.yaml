@@ -1,5 +1,4 @@
 name: CI Pipeline
-# testing force pushing
 on:
   push:
     branches:
