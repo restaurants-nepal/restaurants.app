@@ -7,7 +7,6 @@ import type { TMode } from "./src/shared/models/env-model";
 import type { AppEnv } from "./src/shared/models/app-env";
 import { validateEnv, normalizePort } from "./src/utils/functions/vite-config";
 import path from "path";
-import { sentryVitePlugin } from "@sentry/vite-plugin";
 
 export default defineConfig(({ mode }) => {
   const envMode = mode as TMode;
