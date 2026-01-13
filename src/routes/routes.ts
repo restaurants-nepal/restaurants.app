@@ -6,6 +6,7 @@ const routes = {
   chat: "/chat",
   menuItems: "/menu-items",
   settings: "/settings",
+  accessDenied: "/access-denied",
   admin: {
     name: "/admin",
     restaurants: "restaurants",

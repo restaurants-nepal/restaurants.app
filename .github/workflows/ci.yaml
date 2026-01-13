@@ -36,30 +36,28 @@ jobs:
           BACKEND_URL: ${{secrets.BACKEND_URL}}
           VITE_ENV: ${{vars.VITE_ENV}}
 
-  production:
-    needs: test
-    runs-on: ubuntu-latest
-    environment: test
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
+  # production:
+  #   needs: test
+  #   runs-on: ubuntu-latest
+  #   environment: test
+  #   steps:
+  #     - name: Checkout Repository
+  #       uses: actions/checkout@v3
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: "22.21.1"
+  #     - name: Setup Node.js
+  #       uses: actions/setup-node@v3
+  #       with:
+  #         node-version: "22.21.1"
 
-      - name: Install Dependencies
-        run: npm ci
-
-      - name: Build Application
-        run: npm run build
-        env:
-          PORT: ${{secrets.PORT}}
-          BACKEND_URL: ${{secrets.BACKEND_URL}}
-          VITE_ENV: ${{vars.VITE_ENV}}
-      - name: Upload Production Build Artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: dist
-          path: dist
+  #     #
+  #     - name: Build Application
+  #       run: npm run build
+  #       env:
+  #         PORT: ${{secrets.PORT}}
+  #         BACKEND_URL: ${{secrets.BACKEND_URL}}
+  #         VITE_ENV: ${{vars.VITE_ENV}}
+  #     - name: Upload Production Build Artifact
+  #       uses: actions/upload-artifact@v3
+  #       with:
+  #         name: dist
+  #         path: dist
