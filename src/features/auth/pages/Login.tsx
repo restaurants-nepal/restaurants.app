@@ -36,12 +36,16 @@ const Login = () => {
           state.policies = policies ?? [];
           state.token = token ?? null;
         });
-        if (response?.data?.user?.role === Roles.SUPER_ADMIN) {
+        if (user?.role === Roles.SUPER_ADMIN) {
           navigate(`${routes.admin.name}/${routes.admin.restaurants}`, {
             replace: true,
           });
-        } else {
+        } else if (user?.role === Roles.RESTAURANT_ADMIN) {
           navigate(routes.dashboard, { replace: true });
+        } else if (user?.role === Roles.CUSTOMER) {
+          navigate(`${routes.customer.name}/${routes.customer.landingPage}`, {
+            replace: true,
+          });
         }
       } else {
         console.log("Error while login: ", response?.data);

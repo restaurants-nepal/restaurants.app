@@ -11,6 +11,10 @@ const routes = {
     name: "/admin",
     restaurants: "restaurants",
   },
+  customer: {
+    name: "/customer",
+    landingPage: "landingPage",
+  },
 };
 
 export { routes };

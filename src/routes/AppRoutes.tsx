@@ -14,6 +14,8 @@ import { MenuItems } from "@/features/menu-items/pages/MenuItems";
 import { Setting } from "@/features/settings/pages/Setting";
 import AdminLayout from "@/layout/components/side-bar/admin/AdminLayout";
 import AdminRestaurant from "@/features/super-admin/pages/restaurant/Restaurant";
+import CustomerLayout from "@/features/customer/pages/CustomerLayout";
+import LandingPage from "@/features/customer/pages/LandingPage";
 
 export const dataBrowserRouter = createBrowserRouter(
   createRoutesFromElements(
@@ -55,6 +57,20 @@ export const dataBrowserRouter = createBrowserRouter(
           <Route
             path={routes.menuItems}
             element={<MenuItems />}
+          />
+        </Route>
+
+        {/* Customer Pages */}
+        <Route
+          path={routes.customer.name}
+          element={<CustomerLayout />}>
+          <Route
+            path={routes.customer.landingPage}
+            element={<LandingPage />}
+          />
+          <Route
+            path="*"
+            element={<LandingPage />}
           />
         </Route>
 
