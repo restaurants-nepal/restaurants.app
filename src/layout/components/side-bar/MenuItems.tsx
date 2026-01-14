@@ -4,9 +4,15 @@ import { startCase } from "lodash";
 import HomeIcon from "@/assets/icons/HomeIcon";
 import NavItem from "./NavItem";
 import ItemIcon from "@/assets/icons/Item";
+import RestaurantTableIcon from "@/assets/icons/RestaurantTable";
 
 const menuItems = [
   { name: "dashboard", to: "/dashboard", icon: <HomeIcon /> },
+  {
+    name: "Tables",
+    to: "/restaurant-tables",
+    icon: <RestaurantTableIcon />,
+  },
   { name: "settings", to: "/settings", icon: <SettingIcon /> },
   { name: "items", to: "menu-items", icon: <ItemIcon /> },
 ];
