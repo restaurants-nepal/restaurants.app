@@ -19,8 +19,16 @@ export enum CategoryActions {
   DELETE = "delete",
 }
 
+export enum Actions {
+  VIEW = "view",
+  CREATE = "create",
+  UPDATE = "update",
+  DELETE = "delete",
+}
+
 export type PermissionString =
   | `${Modules.PAGE}:${Pages}`
   | `${Modules.RESTAURANT}:${RestaurantActions}`
   | `${Modules.MENU_ITEM}:${MenuItemActions}`
-  | `${Modules.CATEGORY}:${CategoryActions}`;
+  | `${Modules.CATEGORY}:${CategoryActions}`
+  | `${Modules.RESTAURANT_TABLE}:${Actions}`;

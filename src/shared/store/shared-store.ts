@@ -15,6 +15,7 @@ const initialState: Partial<SharedStorage> = {
   user: {} as User,
   fullName: "",
   policies: [],
+  restaurantId: undefined,
 };
 
 export const useSharedStorage = create<SharedStorageStore>()(

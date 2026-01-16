@@ -5,6 +5,7 @@ export interface SharedStorage {
   fullName?: string | undefined | null;
   user?: User;
   policies?: string[];
+  restaurantId?: number;
   setSharedStorage: (newValue: (state: SharedStorage) => void) => void;
   reset: () => void;
 }

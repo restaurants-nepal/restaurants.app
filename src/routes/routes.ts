@@ -7,9 +7,16 @@ const routes = {
   menuItems: "/menu-items",
   settings: "/settings",
   accessDenied: "/access-denied",
+  restaurantTables: {
+    name: "/restaurant-tables",
+  },
   admin: {
     name: "/admin",
     restaurants: "restaurants",
+  },
+  customer: {
+    name: "/customer",
+    landingPage: "landingPage",
   },
 };
 

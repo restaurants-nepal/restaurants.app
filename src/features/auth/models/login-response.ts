@@ -5,4 +5,5 @@ export interface LoginResponse {
   policies: [string];
   token: string;
   user: User;
+  restaurantId: number;
 }
