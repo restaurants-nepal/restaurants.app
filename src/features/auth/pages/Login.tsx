@@ -5,12 +5,13 @@ import { FloatingInput } from "@/shared/components/input-field";
 import styles from "./login.module.scss";
 import { Button, Image, VStack } from "@chakra-ui/react";
 import Eye from "@/assets/icons/Eye";
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import Hide from "@/assets/icons/Hide";
 import { burger } from "@/shared/constants/image-urls";
 import { UserLogin } from "../api/authApi";
 import { useSharedStorage } from "@/shared/store/shared-store";
 import { Roles } from "../models/role-model";
+import { useIsAuthenticated } from "@/routes/auth";
 
 const Login = () => {
   // States
@@ -19,6 +20,7 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const setSharedStorage = useSharedStorage((state) => state.setSharedStorage);
+  const isAuthenticated = useIsAuthenticated();
 
   // Functions
   const navigate = useNavigate();
@@ -28,13 +30,15 @@ const Login = () => {
     try {
       setIsLoading(true);
       const response = await UserLogin({ phoneNumber: phone, password });
-      const { fullName, user, policies, token } = response?.data || {};
+      const { fullName, user, policies, token, restaurantId } =
+        response?.data || {};
       if (response.statusCode === 200) {
         setSharedStorage((state) => {
           state.fullName = fullName ?? null;
           state.user = user ?? null;
           state.policies = policies ?? [];
           state.token = token ?? null;
+          state.restaurantId = restaurantId;
         });
         if (user?.role === Roles.SUPER_ADMIN) {
           navigate(`${routes.admin.name}/${routes.admin.restaurants}`, {
@@ -56,6 +60,12 @@ const Login = () => {
       setIsLoading(false);
     }
   };
+
+  // UseEffect
+  useEffect(() => {
+    if (isAuthenticated) navigate(`${routes.dashboard}`);
+  }, [navigate, isAuthenticated]);
+
   return (
     <div className={styles.loginContainer}>
       <div className={styles.content}>

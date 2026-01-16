@@ -10,6 +10,11 @@
   padding: 5px 10px;
   justify-content: space-between;
 
+  .topBarLeftContent {
+    margin-left: 120px;
+    color: $secondary;
+  }
+
   .homeIcon,
   .dropIcon {
     cursor: pointer;
