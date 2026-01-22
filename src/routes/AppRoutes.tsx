@@ -34,11 +34,25 @@ export const dataBrowserRouter = createBrowserRouter(
             <RootLayout />
           </ProtectedRoute>
         }>
-        <Route element={<HomeLayout />}>
+        {/* Customer Pages */}
+        <Route
+          path={routes.customer.name}
+          element={<CustomerLayout />}>
           <Route
+            path={routes.customer.landingPage}
+            element={<LandingPage />}
+          />
+          <Route
+            path="*"
+            element={<LandingPage />}
+          />
+        </Route>
+
+        <Route element={<HomeLayout />}>
+          {/* <Route
             path="/"
             element={<Dashboard />}
-          />
+          /> */}
           <Route
             path={routes.dashboard}
             element={<Dashboard />}
@@ -63,24 +77,10 @@ export const dataBrowserRouter = createBrowserRouter(
             path={routes.restaurantTables.name}
             element={<RestaurantTables />}
           />
-          <Route
+          {/* <Route
             path="*"
             element={<Dashboard />}
-          />
-        </Route>
-
-        {/* Customer Pages */}
-        <Route
-          path={routes.customer.name}
-          element={<CustomerLayout />}>
-          <Route
-            path={routes.customer.landingPage}
-            element={<LandingPage />}
-          />
-          <Route
-            path="*"
-            element={<LandingPage />}
-          />
+          /> */}
         </Route>
 
         {/* Admin Pages  */}

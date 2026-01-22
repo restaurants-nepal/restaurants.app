@@ -12,6 +12,7 @@ import { UserLogin } from "../api/authApi";
 import { useSharedStorage } from "@/shared/store/shared-store";
 import { Roles } from "../models/role-model";
 import { useIsAuthenticated } from "@/routes/auth";
+import useNavigatePage from "@/shared/hooks/useNavigatePage";
 
 const Login = () => {
   // States
@@ -20,7 +21,11 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const setSharedStorage = useSharedStorage((state) => state.setSharedStorage);
+  const user = useSharedStorage((state) => state.user);
   const isAuthenticated = useIsAuthenticated();
+
+  // Hooks
+  const navigateByRole = useNavigatePage();
 
   // Functions
   const navigate = useNavigate();
@@ -40,17 +45,7 @@ const Login = () => {
           state.token = token ?? null;
           state.restaurantId = restaurantId;
         });
-        if (user?.role === Roles.SUPER_ADMIN) {
-          navigate(`${routes.admin.name}/${routes.admin.restaurants}`, {
-            replace: true,
-          });
-        } else if (user?.role === Roles.RESTAURANT_ADMIN) {
-          navigate(routes.dashboard, { replace: true });
-        } else if (user?.role === Roles.CUSTOMER) {
-          navigate(`${routes.customer.name}/${routes.customer.landingPage}`, {
-            replace: true,
-          });
-        }
+        navigateByRole(user?.role);
       } else {
         console.log("Error while login: ", response?.data);
       }
@@ -63,8 +58,12 @@ const Login = () => {
 
   // UseEffect
   useEffect(() => {
-    if (isAuthenticated) navigate(`${routes.dashboard}`);
-  }, [navigate, isAuthenticated]);
+    if (isAuthenticated) {
+      navigateByRole(user?.role as Roles);
+    } else {
+      navigate(routes.login);
+    }
+  }, [navigate, isAuthenticated, user?.role, navigateByRole]);
 
   return (
     <div className={styles.loginContainer}>
