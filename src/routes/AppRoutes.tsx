@@ -2,6 +2,7 @@ import {
   createBrowserRouter,
   createRoutesFromElements,
   Route,
+  Navigate,
 } from "react-router-dom";
 import { routes } from "./routes";
 import { ProtectedRoute } from "./protected-route";
@@ -24,17 +25,31 @@ export const dataBrowserRouter = createBrowserRouter(
       element={<GlobalLayout />}
       shouldRevalidate={() => true}
       errorElement={<>ERROR PAGE</>}>
+      {/* 🔓 Public */}
       <Route
         path={routes.login}
         element={<Login />}
       />
+
+      {/* 🔐 Protected */}
       <Route
         element={
           <ProtectedRoute>
             <RootLayout />
           </ProtectedRoute>
         }>
-        {/* Customer Pages */}
+        {/* ✅ ROOT REDIRECT */}
+        <Route
+          path="/"
+          element={
+            <Navigate
+              to={routes.dashboard}
+              replace
+            />
+          }
+        />
+
+        {/* 👤 Customer Pages */}
         <Route
           path={routes.customer.name}
           element={<CustomerLayout />}>
@@ -48,11 +63,8 @@ export const dataBrowserRouter = createBrowserRouter(
           />
         </Route>
 
+        {/* 🏠 Main App Pages */}
         <Route element={<HomeLayout />}>
-          {/* <Route
-            path="/"
-            element={<Dashboard />}
-          /> */}
           <Route
             path={routes.dashboard}
             element={<Dashboard />}
@@ -77,13 +89,9 @@ export const dataBrowserRouter = createBrowserRouter(
             path={routes.restaurantTables.name}
             element={<RestaurantTables />}
           />
-          {/* <Route
-            path="*"
-            element={<Dashboard />}
-          /> */}
         </Route>
 
-        {/* Admin Pages  */}
+        {/* 👑 Admin Pages */}
         <Route
           path={routes.admin.name}
           element={<AdminLayout />}>
