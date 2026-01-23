@@ -4,11 +4,18 @@ import { startCase } from "lodash";
 import HomeIcon from "@/assets/icons/HomeIcon";
 import NavItem from "./NavItem";
 import ItemIcon from "@/assets/icons/Item";
+import RestaurantTableIcon from "@/assets/icons/RestaurantTable";
+import { routes } from "@/routes/routes";
 
 const menuItems = [
-  { name: "dashboard", to: "/dashboard", icon: <HomeIcon /> },
-  { name: "settings", to: "/settings", icon: <SettingIcon /> },
-  { name: "items", to: "menu-items", icon: <ItemIcon /> },
+  { name: "dashboard", to: `${routes.dashboard}`, icon: <HomeIcon /> },
+  {
+    name: "Tables",
+    to: `${routes.restaurantTables}`,
+    icon: <RestaurantTableIcon />,
+  },
+  { name: "settings", to: `${routes.settings}`, icon: <SettingIcon /> },
+  { name: "items", to: `${routes.menuItems}`, icon: <ItemIcon /> },
 ];
 
 export const MenuItems = () => {
