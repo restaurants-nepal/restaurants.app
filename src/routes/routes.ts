@@ -9,6 +9,9 @@ const routes = {
   accessDenied: "/access-denied",
   restaurantTables: {
     name: "/restaurant-tables",
+    params: {
+      name: "/:restaurant-id",
+    },
   },
   admin: {
     name: "/admin",

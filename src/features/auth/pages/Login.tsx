@@ -5,7 +5,7 @@ import { FloatingInput } from "@/shared/components/input-field";
 import styles from "./login.module.scss";
 import { Button, Image, VStack } from "@chakra-ui/react";
 import Eye from "@/assets/icons/Eye";
-import { useEffect, useState, type FormEvent } from "react";
+import { lazy, Suspense, useEffect, useState, type FormEvent } from "react";
 import Hide from "@/assets/icons/Hide";
 import { burger } from "@/shared/constants/image-urls";
 import { UserLogin } from "../api/authApi";
@@ -13,6 +13,8 @@ import { useSharedStorage } from "@/shared/store/shared-store";
 import { Roles } from "../models/role-model";
 import { useIsAuthenticated } from "@/routes/auth";
 import useNavigatePage from "@/shared/hooks/useNavigatePage";
+
+const RestaurantScene = lazy(() => import("../components/RestaurantScene"));
 
 const Login = () => {
   // States
@@ -67,6 +69,14 @@ const Login = () => {
 
   return (
     <div className={styles.loginContainer}>
+      {/* 3D Restaurant Scene Background */}
+      <Suspense fallback={null}>
+        <RestaurantScene />
+      </Suspense>
+
+      {/* Gradient overlay to ensure legibility */}
+      <div className={styles.gradientOverlay} />
+
       <div className={styles.content}>
         <div className={styles.image}>
           <Image
@@ -77,6 +87,8 @@ const Login = () => {
             boxSize="50px"
           />
         </div>
+        <h2 className={styles.title}>Welcome Back</h2>
+        <p className={styles.subtitle}>Sign in to your restaurant dashboard</p>
         <form onSubmit={(e) => onSubmit(e)}>
           <VStack gap={5}>
             <FloatingInput

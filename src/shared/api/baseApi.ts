@@ -7,6 +7,8 @@ import type {
 } from "axios";
 import axios from "axios";
 import { useSharedStorage } from "../store/shared-store";
+import { useNavigate } from "react-router-dom";
+import { routes } from "@/routes/routes";
 
 const HOST_NAME = "/api";
 
@@ -38,11 +40,13 @@ apiInstance.interceptors.response.use(
     return response;
   },
   (error: AxiosError) => {
+    const navigate = useNavigate();
     const status = error.response?.status;
     if (status === 401) {
       console.warn(
         "⚠️ Unauthorized! Please handle authentication in your component.",
       );
+      navigate(routes.login);
     }
 
     if (status === 500) {

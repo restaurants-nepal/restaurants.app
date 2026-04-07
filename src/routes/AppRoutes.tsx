@@ -33,7 +33,7 @@ export const dataBrowserRouter = createBrowserRouter(
 
       {/* 🍔 Restaurant Table */}
       <Route
-        path={routes.restaurantTables.name}
+        path={`${routes.restaurantTables.name}${routes.restaurantTables.params.name}`}
         element={<RestaurantTables />}
       />
 
