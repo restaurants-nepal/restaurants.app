@@ -2,7 +2,7 @@ import { routes } from "@/routes/routes";
 import useCan from "@/shared/hooks/useCan";
 import { useEffect, type JSX } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useMenuItems } from "../services/menu-items";
+import { useMenuItems } from "../../services/menu-items";
 
 const RestaurantTables = (): JSX.Element => {
   const canViewRestaurantTable = useCan("page:restaurantTables");
@@ -12,7 +12,7 @@ const RestaurantTables = (): JSX.Element => {
   // Services
   const menuItems = useMenuItems(restaurantTableId || "");
 
-  console.log("Restaurant Table ID:", menuItems);
+  // console.log("Restaurant Table ID:", menuItems);
 
   // useEffect
   useEffect(() => {
@@ -21,7 +21,7 @@ const RestaurantTables = (): JSX.Element => {
     }
   }, [navigate, canViewRestaurantTable]);
 
-  return <div>Restaurant Tables</div>;
+  return <div>Tables Management</div>;
 };
 
 export default RestaurantTables;

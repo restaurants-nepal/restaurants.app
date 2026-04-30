@@ -7,7 +7,6 @@ import type {
 } from "axios";
 import axios from "axios";
 import { useSharedStorage } from "../store/shared-store";
-import { useNavigate } from "react-router-dom";
 import { routes } from "@/routes/routes";
 
 const HOST_NAME = "/api";
@@ -37,16 +36,18 @@ apiInstance.interceptors.request.use(
 // Response Interceptor to handle responses globally
 apiInstance.interceptors.response.use(
   (response: AxiosResponse) => {
+    console.log("LOGGING", response);
+
     return response;
   },
   (error: AxiosError) => {
-    const navigate = useNavigate();
     const status = error.response?.status;
     if (status === 401) {
       console.warn(
         "⚠️ Unauthorized! Please handle authentication in your component.",
       );
-      navigate(routes.login);
+      localStorage.clear();
+      window.location.href = routes.login;
     }
 
     if (status === 500) {

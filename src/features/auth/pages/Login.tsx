@@ -5,7 +5,13 @@ import { FloatingInput } from "@/shared/components/input-field";
 import styles from "./login.module.scss";
 import { Button, Image, VStack } from "@chakra-ui/react";
 import Eye from "@/assets/icons/Eye";
-import { lazy, Suspense, useEffect, useState, type FormEvent } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type FormEvent,
+} from "react";
 import Hide from "@/assets/icons/Hide";
 import { burger } from "@/shared/constants/image-urls";
 import { UserLogin } from "../api/authApi";
@@ -13,11 +19,11 @@ import { useSharedStorage } from "@/shared/store/shared-store";
 import { Roles } from "../models/role-model";
 import { useIsAuthenticated } from "@/routes/auth";
 import useNavigatePage from "@/shared/hooks/useNavigatePage";
-
-const RestaurantScene = lazy(() => import("../components/RestaurantScene"));
+import CustomCursor from "../components/CustomCursor";
+import RestaurantScene from "../components/RestaurantScene";
 
 const Login = () => {
-  // States
+  // ── Form state ──
   const [phone, setPhone] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -26,12 +32,29 @@ const Login = () => {
   const user = useSharedStorage((state) => state.user);
   const isAuthenticated = useIsAuthenticated();
 
-  // Hooks
-  const navigateByRole = useNavigatePage();
+  // ── Mouse tracking ──
+  const mouseRef = useRef({ x: 0, y: 0, px: -1000, py: -1000 });
+  const [isInsideModal, setIsInsideModal] = useState(false);
 
-  // Functions
+  useEffect(() => {
+    const onMove = (e: MouseEvent) => {
+      mouseRef.current.x = (e.clientX / window.innerWidth) * 2 - 1;
+      mouseRef.current.y = -(e.clientY / window.innerHeight) * 2 + 1;
+      mouseRef.current.px = e.clientX;
+      mouseRef.current.py = e.clientY;
+    };
+    window.addEventListener("mousemove", onMove);
+    return () => window.removeEventListener("mousemove", onMove);
+  }, []);
+
+  const handleModalEnter = useCallback(() => setIsInsideModal(true), []);
+  const handleModalLeave = useCallback(() => setIsInsideModal(false), []);
+
+  // ── Hooks ──
+  const navigateByRole = useNavigatePage();
   const navigate = useNavigate();
 
+  // ── Submit ──
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
@@ -58,7 +81,7 @@ const Login = () => {
     }
   };
 
-  // UseEffect
+  // ── Auth redirect ──
   useEffect(() => {
     if (isAuthenticated) {
       navigateByRole(user?.role as Roles);
@@ -68,16 +91,21 @@ const Login = () => {
   }, [navigate, isAuthenticated, user?.role, navigateByRole]);
 
   return (
-    <div className={styles.loginContainer}>
-      {/* 3D Restaurant Scene Background */}
-      <Suspense fallback={null}>
-        <RestaurantScene />
-      </Suspense>
+    <div
+      className={`${styles.loginContainer} ${isInsideModal ? "" : styles.hideCursor}`}
+    >
+      {/* Custom cursor (hidden when inside modal) */}
+      <CustomCursor isInsideModal={isInsideModal} />
 
-      {/* Gradient overlay to ensure legibility */}
-      <div className={styles.gradientOverlay} />
+      {/* Background scene: parallax image + particles */}
+      <RestaurantScene mouseRef={mouseRef} />
 
-      <div className={styles.content}>
+      {/* Login card */}
+      <div
+        className={styles.content}
+        onMouseEnter={handleModalEnter}
+        onMouseLeave={handleModalLeave}
+      >
         <div className={styles.image}>
           <Image
             borderRadius="full"
@@ -107,15 +135,13 @@ const Login = () => {
               endElement={
                 <div
                   className={styles.passwordBtn}
-                  onClick={() => setShowPassword((prev) => !prev)}>
+                  onClick={() => setShowPassword((prev) => !prev)}
+                >
                   {showPassword ? <Eye /> : <Hide />}
                 </div>
               }
             />
-            <Button
-              disabled={isLoading}
-              colorPalette={"blue"}
-              type="submit">
+            <Button disabled={isLoading} colorPalette={"blue"} type="submit">
               Submit
             </Button>
           </VStack>

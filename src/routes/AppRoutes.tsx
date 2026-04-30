@@ -8,16 +8,16 @@ import { routes } from "./routes";
 import { ProtectedRoute } from "./protected-route";
 import { GlobalLayout } from "@/layout/GlobalLayout";
 import { HomeLayout } from "@/layout/components/main-content/MainContent";
-import { Dashboard } from "@/features/dashboard/pages/Dashboard";
 import { Login } from "@/features/auth/pages/Login";
 import { RootLayout } from "@/layout/components/root-layout/RootLayout";
-import { MenuItems } from "@/features/menu-items/pages/MenuItems";
-import { Setting } from "@/features/settings/pages/Setting";
 import AdminLayout from "@/layout/components/side-bar/admin/AdminLayout";
 import AdminRestaurant from "@/features/super-admin/pages/restaurant/Restaurant";
 import CustomerLayout from "@/features/customer/pages/CustomerLayout";
 import LandingPage from "@/features/customer/pages/LandingPage";
-import RestaurantTables from "@/features/restaurant-tables/pages/RestaurantTable";
+import RestaurantTables from "@/features/restaurant-users/pages/restaurant-tables/RestaurantTable";
+import { Dashboard } from "@/features/restaurant-users/pages/dashboard/Dashboard";
+import { Setting } from "@/features/restaurant-users/pages/settings/Setting";
+import { MenuItems } from "@/layout/components/side-bar/MenuItems";
 
 export const dataBrowserRouter = createBrowserRouter(
   createRoutesFromElements(
@@ -90,6 +90,10 @@ export const dataBrowserRouter = createBrowserRouter(
           <Route
             path={routes.menuItems}
             element={<MenuItems />}
+          />
+          <Route
+            path = {routes.restaurantTables.name}
+            element={<RestaurantTables />}
           />
         </Route>
 

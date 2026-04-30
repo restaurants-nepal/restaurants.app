@@ -11,7 +11,7 @@ const menuItems = [
   { name: "dashboard", to: `${routes.dashboard}`, icon: <HomeIcon /> },
   {
     name: "Tables",
-    to: `${routes.restaurantTables}`,
+    to: `${routes.restaurantTables.name}`,
     icon: <RestaurantTableIcon />,
   },
   { name: "settings", to: `${routes.settings}`, icon: <SettingIcon /> },

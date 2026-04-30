@@ -1,322 +1,309 @@
-import { useRef, useMemo } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
-import { Float } from "@react-three/drei";
-import * as THREE from "three";
+import { useEffect, useRef, type MutableRefObject } from "react";
 
-// ─── Floating Plate ───
-function Plate({ position }: { position: [number, number, number] }) {
-  const ref = useRef<THREE.Mesh>(null!);
-  useFrame(({ clock }) => {
-    ref.current.rotation.y = clock.getElapsedTime() * 0.3;
-    ref.current.rotation.x = Math.sin(clock.getElapsedTime() * 0.5) * 0.1;
-  });
+type MouseRef = MutableRefObject<{ x: number; y: number; px: number; py: number }>;
+
+/* ═══════════════════════════════════════════════════
+ * Vector Icons
+ * ═══════════════════════════════════════════════════ */
+const FireVector = () => (
+  <svg width="90" height="90" viewBox="0 0 24 24">
+    <path fill="#FF5722" d="M17.65 11.45c-1.15-2-2.92-3.32-4-5.38-1.57-3-1-5.6-.96-5.83.02-.13-.08-.24-.2-.24-.1 0-.19.06-.23.15-1.19 3.01-4 3.73-4.99 5.53-1.33 2.45-1.14 5.37.5 7.63.1.14.07.33-.06.44-.13.11-.32.11-.45.01-.29-.21-.55-.45-.78-.71-1.37-1.46-2.19-3.23-2.13-4.8.03-.23-.27-.37-.51-.23-.1.06-.15.17-.13.27C4 11.23 4.29 14.02 5.53 16c1.69 2.7 4.54 4.09 7.69 4 3.44-.1 6.53-2.58 7.37-5.91.43-1.74.05-3.61-1.04-5.22-.09-.13-.27-.13-.37 0-.41.52-.94 1-1.53 1.48z" />
+    <path fill="#FFC107" d="M13.4 18.06c-1.55.93-3.05.5-3.95-.59-.72-.88-.73-2.02-.12-2.98.53-.83 1.25-1.37 1.83-2.22.47-.73.81-1.57.81-2.45 0-.09.11-.14.18-.08 1.15 1.05 3.32 3.03 2.5 5.51-.19.6.14.3.43-.09 1-1.3 1-3.64 1-3.64.01-.13.19-.15.24-.04.41 1.05.65 2.19.49 3.35-.29 2.12-1.87 3.65-3.41 3.23z" />
+  </svg>
+);
+
+const CoffeeVector = () => (
+  <svg width="100" height="100" viewBox="0 0 24 24">
+    {/* Vapour Lines */}
+    <path fill="none" stroke="#faedcd" strokeWidth="1.2" strokeLinecap="round" d="M8 7 C 8 3, 10 4, 10 1" opacity="0.7">
+      <animate attributeName="d" values="M8 7 C 8 3, 10 4, 10 1; M8 7 C 7 3, 11 4, 10 1; M8 7 C 8 3, 10 4, 10 1" dur="3s" repeatCount="indefinite" />
+    </path>
+    <path fill="none" stroke="#faedcd" strokeWidth="1.2" strokeLinecap="round" d="M12 8 C 11 4, 13 3, 12 0" opacity="0.7">
+      <animate attributeName="d" values="M12 8 C 11 4, 13 3, 12 0; M12 8 C 13 4, 11 3, 12 0; M12 8 C 11 4, 13 3, 12 0" dur="4s" repeatCount="indefinite" />
+    </path>
+    <path fill="none" stroke="#faedcd" strokeWidth="1.2" strokeLinecap="round" d="M16 7 C 17 3, 15 4, 15 1" opacity="0.7">
+      <animate attributeName="d" values="M16 7 C 17 3, 15 4, 15 1; M16 7 C 15 3, 16 4, 15 1; M16 7 C 17 3, 15 4, 15 1" dur="3.5s" repeatCount="indefinite" />
+    </path>
+    {/* Mug shifted down slightly */}
+    <g transform="translate(0, 3) scale(0.9) transform-origin(center)">
+      <path fill="#d4a373" d="M20 3H4v10c0 2.21 1.79 4 4 4h6c2.21 0 4-1.79 4-4v-3h2c1.11 0 2-.9 2-2V5c0-1.11-.89-2-2-2zm0 5h-2V5h2v3z" />
+      <path fill="#faedcd" d="M4 19h16v2H4z" />
+    </g>
+  </svg>
+);
+
+const SekuaVector = () => (
+  <svg width="130" height="130" viewBox="0 0 24 24" transform="rotate(-40)">
+    <rect x="11.5" y="2" width="1.5" height="20" rx="0.5" fill="#FFE0B2" />
+    <rect x="7.5" y="5" width="9" height="5" rx="1.5" fill="#a0522d" />
+    <rect x="8" y="11" width="8" height="4.5" rx="1" fill="#8b4513" />
+    <rect x="7.5" y="16.5" width="9" height="4.5" rx="1.5" fill="#a0522d" />
+  </svg>
+);
+
+/* ═══════════════════════════════════════════════════
+ * Floating Parallax Container
+ * ═══════════════════════════════════════════════════ */
+interface ParallaxItemProps {
+  mouseRef: MouseRef;
+  children: React.ReactNode;
+  parallaxFactor: number;
+  floatSpeed: number;
+  floatOffset: number;
+  startPos: { top: string; left: string };
+  glowColor: string;
+  scale?: number;
+}
+
+function ParallaxItem({
+  mouseRef,
+  children,
+  parallaxFactor,
+  floatSpeed,
+  floatOffset,
+  startPos,
+  glowColor,
+  scale = 1,
+}: ParallaxItemProps) {
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    let raf: number;
+    let time = 0;
+    let currentX = 0;
+    let currentY = 0;
+    let dodgeX = 0;
+    let dodgeY = 0;
+
+    const animate = () => {
+      time += 0.01;
+
+      // Mouse Parallax
+      const targetX = mouseRef.current.x * parallaxFactor;
+      const targetY = -mouseRef.current.y * parallaxFactor;
+
+      currentX += (targetX - currentX) * 0.06;
+      currentY += (targetY - currentY) * 0.06;
+
+      // Float
+      const floatX = Math.cos(time * floatSpeed * 0.8 + floatOffset) * 12;
+      const floatY = Math.sin(time * floatSpeed + floatOffset) * 16;
+      const rot = Math.sin(time * floatSpeed * 0.5 + floatOffset) * 4;
+
+      // Dodge interaction (Repel the mouse)
+      if (ref.current) {
+        const rect = ref.current.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+
+        // Calculate "resting" physical position by untangling the current dodge offset
+        // This ensures the element doesn't jitter rapidly in a feedback loop
+        const effectiveX = centerX - dodgeX;
+        const effectiveY = centerY - dodgeY;
+
+        const dx = effectiveX - mouseRef.current.px;
+        const dy = effectiveY - mouseRef.current.py;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+
+        const threshold = 180; // Distance in pixels to start dodging
+        if (dist < threshold && dist > 0) {
+          const force = (threshold - dist) / threshold; // Scale 0 to 1
+          const targetDodgeX = (dx / dist) * force * 150; // max push 150px
+          const targetDodgeY = (dy / dist) * force * 150;
+          dodgeX += (targetDodgeX - dodgeX) * 0.15;
+          dodgeY += (targetDodgeY - dodgeY) * 0.15;
+        } else {
+          dodgeX += (0 - dodgeX) * 0.05; // slowly return to resting position
+          dodgeY += (0 - dodgeY) * 0.05;
+        }
+
+        ref.current.style.transform = `translate(${currentX + floatX + dodgeX}px, ${currentY + floatY + dodgeY}px) rotate(${rot}deg) scale(${scale})`;
+      }
+      raf = requestAnimationFrame(animate);
+    };
+    animate();
+    return () => cancelAnimationFrame(raf);
+  }, [mouseRef, parallaxFactor, floatSpeed, floatOffset, scale]);
+
   return (
-    <Float speed={2} rotationIntensity={0.4} floatIntensity={1.5}>
-      <group>
-        <mesh ref={ref} position={position} castShadow>
-          <torusGeometry args={[1, 0.18, 12, 48]} />
-          <meshStandardMaterial color="#f5f0e8" roughness={0.2} metalness={0.1} />
-        </mesh>
-        {/* Inner plate surface */}
-        <mesh position={[position[0], position[1] - 0.05, position[2]]}>
-          <cylinderGeometry args={[0.82, 0.82, 0.06, 32]} />
-          <meshStandardMaterial color="#fffef9" roughness={0.15} metalness={0.05} />
-        </mesh>
-      </group>
-    </Float>
+    <div
+      ref={ref}
+      style={{
+        position: "absolute",
+        ...startPos,
+        opacity: 0.35,
+        filter: `drop-shadow(0 15px 25px ${glowColor}) blur(2px)`,
+        willChange: "transform",
+      }}
+    >
+      {children}
+    </div>
   );
 }
 
-// ─── Fork / Knife ───
-function Utensil({
-  position,
-  rotationZ = 0,
-  color = "#c0c0c0",
-}: {
-  position: [number, number, number];
-  rotationZ?: number;
-  color?: string;
-}) {
-  const ref = useRef<THREE.Group>(null!);
-  useFrame(({ clock }) => {
-    ref.current.rotation.z =
-      rotationZ + Math.sin(clock.getElapsedTime() * 0.7) * 0.15;
-    ref.current.position.y =
-      position[1] + Math.sin(clock.getElapsedTime() * 0.9) * 0.15;
-  });
-  return (
-    <Float speed={1.5} rotationIntensity={0.3} floatIntensity={1}>
-      <group ref={ref} position={position}>
-        <mesh position={[0, -0.5, 0]}>
-          <boxGeometry args={[0.08, 1, 0.03]} />
-          <meshStandardMaterial color={color} roughness={0.1} metalness={0.9} />
-        </mesh>
-        <mesh position={[0, 0.2, 0]}>
-          <boxGeometry args={[0.15, 0.5, 0.02]} />
-          <meshStandardMaterial color={color} roughness={0.1} metalness={0.9} />
-        </mesh>
-      </group>
-    </Float>
-  );
-}
+/* ═══════════════════════════════════════════════════
+ * 2D Canvas Background Dots
+ * ═══════════════════════════════════════════════════ */
+function useParticles(
+  canvasRef: React.RefObject<HTMLCanvasElement | null>,
+  mouseRef: MouseRef,
+  count = 60
+) {
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
 
-// ─── Wine Glass ───
-function WineGlass({ position }: { position: [number, number, number] }) {
-  const ref = useRef<THREE.Group>(null!);
-  useFrame(({ clock }) => {
-    ref.current.rotation.y = clock.getElapsedTime() * 0.4;
-    ref.current.position.y =
-      position[1] + Math.sin(clock.getElapsedTime() * 0.6) * 0.2;
-  });
-  return (
-    <Float speed={1.8} rotationIntensity={0.2} floatIntensity={1.2}>
-      <group ref={ref} position={position}>
-        {/* Base */}
-        <mesh position={[0, -0.6, 0]}>
-          <cylinderGeometry args={[0.3, 0.3, 0.05, 16]} />
-          <meshStandardMaterial
-            color="#e8e0d0"
-            roughness={0.05}
-            metalness={0.3}
-            transparent
-            opacity={0.6}
-          />
-        </mesh>
-        {/* Stem */}
-        <mesh position={[0, -0.25, 0]}>
-          <cylinderGeometry args={[0.03, 0.03, 0.7, 8]} />
-          <meshStandardMaterial
-            color="#e8e0d0"
-            roughness={0.05}
-            metalness={0.3}
-            transparent
-            opacity={0.6}
-          />
-        </mesh>
-        {/* Bowl */}
-        <mesh position={[0, 0.25, 0]}>
-          <sphereGeometry args={[0.35, 16, 16, 0, Math.PI * 2, 0, Math.PI / 2]} />
-          <meshStandardMaterial
-            color="#e8dfd4"
-            roughness={0.05}
-            metalness={0.1}
-            transparent
-            opacity={0.35}
-            side={THREE.DoubleSide}
-          />
-        </mesh>
-        {/* Wine liquid */}
-        <mesh position={[0, 0.2, 0]}>
-          <cylinderGeometry args={[0.28, 0.15, 0.2, 16]} />
-          <meshStandardMaterial color="#8b1a32" roughness={0.3} metalness={0.1} />
-        </mesh>
-      </group>
-    </Float>
-  );
-}
+    const resize = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    };
+    resize();
+    window.addEventListener("resize", resize);
 
-// ─── Donut ───
-function Donut({ position }: { position: [number, number, number] }) {
-  const ref = useRef<THREE.Mesh>(null!);
-  useFrame(({ clock }) => {
-    ref.current.rotation.x = clock.getElapsedTime() * 0.5;
-    ref.current.rotation.z = Math.sin(clock.getElapsedTime() * 0.4) * 0.3;
-  });
-  return (
-    <Float speed={2.5} rotationIntensity={0.6} floatIntensity={2}>
-      <group>
-        <mesh ref={ref} position={position} castShadow>
-          <torusGeometry args={[0.35, 0.18, 12, 24]} />
-          <meshStandardMaterial color="#e8943a" roughness={0.6} metalness={0.05} />
-        </mesh>
-        {/* Icing */}
-        <mesh position={[position[0], position[1] + 0.08, position[2]]}>
-          <torusGeometry args={[0.35, 0.15, 12, 24]} />
-          <meshStandardMaterial color="#e84393" roughness={0.4} metalness={0.05} />
-        </mesh>
-      </group>
-    </Float>
-  );
-}
+    const particles = Array.from({ length: count }, () => ({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      baseX: Math.random() * canvas.width,
+      baseY: Math.random() * canvas.height,
+      size: 1 + Math.random() * 2,
+      speed: 0.1 + Math.random() * 0.3,
+      offset: Math.random() * Math.PI * 2,
+      mouseFactor: 0.2 + Math.random() * 0.6,
+      alpha: 0.15 + Math.random() * 0.4,
+      hue: 20 + Math.random() * 30,
+    }));
 
-// ─── Pizza Slice ───
-function PizzaSlice({ position }: { position: [number, number, number] }) {
-  const ref = useRef<THREE.Mesh>(null!);
-  useFrame(({ clock }) => {
-    ref.current.rotation.y = clock.getElapsedTime() * 0.35;
-    ref.current.rotation.z = Math.sin(clock.getElapsedTime() * 0.3) * 0.2;
-  });
+    let raf: number;
+    let time = 0;
 
-  const shape = useMemo(() => {
-    const s = new THREE.Shape();
-    s.moveTo(0, 0);
-    s.lineTo(-0.5, 1.2);
-    s.quadraticCurveTo(0, 1.4, 0.5, 1.2);
-    s.lineTo(0, 0);
-    return s;
-  }, []);
+    const draw = () => {
+      time += 0.01;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  return (
-    <Float speed={1.6} rotationIntensity={0.5} floatIntensity={1.8}>
-      <mesh ref={ref} position={position} castShadow>
-        <extrudeGeometry
-          args={[shape, { depth: 0.08, bevelEnabled: true, bevelThickness: 0.02, bevelSize: 0.02, bevelSegments: 1 }]}
-        />
-        <meshStandardMaterial color="#f0c040" roughness={0.5} metalness={0.05} />
-      </mesh>
-    </Float>
-  );
-}
+      const mx = mouseRef.current.x; 
+      const my = mouseRef.current.y; 
 
-// ─── Ambient Particles (lightweight) ───
-function Particles({ count = 50 }: { count?: number }) {
-  const mesh = useRef<THREE.InstancedMesh>(null!);
-  const dummy = useMemo(() => new THREE.Object3D(), []);
+      particles.forEach((p) => {
+        const driftX = Math.sin(time * p.speed + p.offset) * 20;
+        const driftY = Math.cos(time * p.speed * 0.8 + p.offset) * 20;
+        const mouseOffsetX = mx * p.mouseFactor * 45;
+        const mouseOffsetY = -my * p.mouseFactor * 45;
 
-  const particles = useMemo(() => {
-    const temp = [];
-    for (let i = 0; i < count; i++) {
-      temp.push({
-        position: [
-          (Math.random() - 0.5) * 18,
-          (Math.random() - 0.5) * 18,
-          (Math.random() - 0.5) * 18,
-        ] as [number, number, number],
-        speed: 0.2 + Math.random() * 0.4,
-        offset: Math.random() * Math.PI * 2,
-        scale: 0.02 + Math.random() * 0.03,
+        p.x += (p.baseX + driftX + mouseOffsetX - p.x) * 0.04;
+        p.y += (p.baseY + driftY + mouseOffsetY - p.y) * 0.04;
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fillStyle = `hsla(${p.hue}, 80%, 70%, ${p.alpha})`;
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size * 3, 0, Math.PI * 2);
+        ctx.fillStyle = `hsla(${p.hue}, 80%, 70%, ${p.alpha * 0.15})`;
+        ctx.fill();
       });
-    }
-    return temp;
-  }, [count]);
 
-  useFrame(({ clock }) => {
-    const time = clock.getElapsedTime();
-    particles.forEach((p, i) => {
-      dummy.position.set(
-        p.position[0] + Math.sin(time * p.speed + p.offset) * 0.5,
-        p.position[1] + Math.cos(time * p.speed * 0.8 + p.offset) * 0.5,
-        p.position[2] + Math.sin(time * p.speed * 0.6 + p.offset) * 0.3
-      );
-      dummy.scale.setScalar(p.scale);
-      dummy.updateMatrix();
-      mesh.current.setMatrixAt(i, dummy.matrix);
-    });
-    mesh.current.instanceMatrix.needsUpdate = true;
-  });
+      raf = requestAnimationFrame(draw);
+    };
+    draw();
 
-  return (
-    <instancedMesh ref={mesh} args={[undefined, undefined, count]}>
-      <sphereGeometry args={[1, 6, 6]} />
-      <meshStandardMaterial
-        color="#ffd6a5"
-        emissive="#ff9f43"
-        emissiveIntensity={0.5}
-        transparent
-        opacity={0.45}
-      />
-    </instancedMesh>
-  );
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("resize", resize);
+    };
+  }, [canvasRef, mouseRef, count]);
 }
 
-// ─── Glowing Orb (simple material, no distortion) ───
-function GlowOrb({
-  position,
-  color,
-  size = 0.5,
-}: {
-  position: [number, number, number];
-  color: string;
-  size?: number;
-}) {
-  const ref = useRef<THREE.Mesh>(null!);
-  useFrame(({ clock }) => {
-    const s = size + Math.sin(clock.getElapsedTime() * 1.5) * 0.08;
-    ref.current.scale.setScalar(s);
-  });
-  return (
-    <Float speed={1} rotationIntensity={0.1} floatIntensity={2}>
-      <mesh ref={ref} position={position}>
-        <icosahedronGeometry args={[1, 2]} />
-        <meshStandardMaterial
-          color={color}
-          emissive={color}
-          emissiveIntensity={0.3}
-          roughness={0.2}
-          metalness={0.1}
-          transparent
-          opacity={0.2}
-        />
-      </mesh>
-    </Float>
-  );
+/* ═══════════════════════════════════════════════════
+ * Floating Element Data Configuration
+ * ═══════════════════════════════════════════════════ */
+const floatingConfig = [
+  // Fires
+  { id: 1, type: "fire", top: "15%", left: "12%", factor: 50, speed: 2.1, offset: 0, scale: 0.85 },
+  { id: 2, type: "fire", top: "70%", left: "82%", factor: 35, speed: 1.6, offset: 1.5, scale: 0.65 },
+  { id: 3, type: "fire", top: "85%", left: "28%", factor: 75, speed: 2.8, offset: 3, scale: 1.15 },
+  { id: 4, type: "fire", top: "45%", left: "92%", factor: 85, speed: 2.3, offset: 4.5, scale: 1 },
+
+  // Coffees
+  { id: 5, type: "coffee", top: "12%", left: "80%", factor: 45, speed: 1.9, offset: 2, scale: 0.95 },
+  { id: 6, type: "coffee", top: "62%", left: "18%", factor: 65, speed: 2.6, offset: 0.5, scale: 1.05 },
+  { id: 7, type: "coffee", top: "35%", left: "8%", factor: 25, speed: 1.3, offset: 5, scale: 0.75 },
+  { id: 8, type: "coffee", top: "82%", left: "62%", factor: 55, speed: 2.2, offset: 3.5, scale: 1.25 },
+
+  // Sekuas
+  { id: 9, type: "sekua", top: "28%", left: "68%", factor: 70, speed: 1.5, offset: 4, scale: 1.1 },
+  { id: 10, type: "sekua", top: "75%", left: "42%", factor: 40, speed: 1.8, offset: 1, scale: 0.8 },
+  { id: 11, type: "sekua", top: "18%", left: "40%", factor: 60, speed: 2.7, offset: 6, scale: 0.9 },
+  { id: 12, type: "sekua", top: "55%", left: "80%", factor: 50, speed: 2.0, offset: 2.5, scale: 1.0 },
+];
+
+/* ═══════════════════════════════════════════════════
+ * Main Scene Container
+ * ═══════════════════════════════════════════════════ */
+interface RestaurantSceneProps {
+  mouseRef: MouseRef;
 }
 
-// ─── Slow orbit camera movement ───
-function CameraRig() {
-  useFrame(({ clock, camera }) => {
-    const t = clock.getElapsedTime() * 0.15;
-    camera.position.x = Math.sin(t) * 0.5;
-    camera.position.y = Math.cos(t * 0.7) * 0.3;
-    camera.lookAt(0, 0, 0);
-  });
-  return null;
-}
+export default function RestaurantScene({ mouseRef }: RestaurantSceneProps) {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
-// ─── Main Scene Export ───
-export default function RestaurantScene() {
+  useParticles(canvasRef, mouseRef, 80);
+
   return (
     <div
       style={{
         position: "fixed",
         top: 0,
         left: 0,
-        width: "100vw",
-        height: "100vh",
+        width: "100%",
+        height: "100%",
         zIndex: 0,
         pointerEvents: "none",
+        overflow: "hidden",
       }}
     >
-      <Canvas
-        camera={{ position: [0, 0, 8], fov: 50 }}
-        dpr={[1, 1]}
-        gl={{
-          antialias: false,
-          alpha: true,
-          powerPreference: "low-power",
-          failIfMajorPerformanceCaveat: false,
+      <canvas
+        ref={canvasRef}
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          zIndex: 0,
         }}
-        style={{ background: "transparent" }}
-        onCreated={({ gl }) => {
-          gl.getContext().canvas.addEventListener("webglcontextlost", (e) => {
-            e.preventDefault();
-          });
-        }}
-      >
-        <CameraRig />
+      />
 
-        {/* Lighting — minimal setup */}
-        <ambientLight intensity={0.5} />
-        <directionalLight position={[5, 5, 5]} intensity={0.7} color="#fff5e6" />
-        <pointLight position={[-4, 3, 2]} intensity={0.5} color="#ff9f43" />
-
-        {/* Food Objects — reduced count */}
-        <Plate position={[-3.5, 1.5, -2]} />
-        <Plate position={[3.8, -1.8, -3]} />
-        <Utensil position={[-2.5, 0.8, -1]} rotationZ={0.3} />
-        <Utensil position={[2.8, 1.2, -1.5]} rotationZ={-0.2} color="#d4a76a" />
-        <WineGlass position={[3.5, 2.2, -2.5]} />
-        <Donut position={[-2, -2.2, -1]} />
-        <PizzaSlice position={[2.5, -0.5, -1.5]} />
-
-        {/* Glowing Orbs — fewer, simpler */}
-        <GlowOrb position={[-4, 0, -4]} color="#ff6b6b" size={0.8} />
-        <GlowOrb position={[4, 2, -5]} color="#feca57" size={0.6} />
-        <GlowOrb position={[0, -3, -6]} color="#ff9ff3" size={0.7} />
-
-        {/* Particles — reduced */}
-        <Particles count={50} />
-      </Canvas>
+      <div style={{ zIndex: 1, position: "absolute", width: "100%", height: "100%" }}>
+        {floatingConfig.map((item) => (
+          <ParallaxItem
+            key={item.id}
+            mouseRef={mouseRef}
+            parallaxFactor={item.factor}
+            floatSpeed={item.speed}
+            floatOffset={item.offset}
+            scale={item.scale}
+            startPos={{ top: item.top, left: item.left }}
+            glowColor={
+              item.type === "fire"
+                ? "rgba(255, 87, 34, 0.4)"
+                : item.type === "coffee"
+                ? "rgba(212, 163, 115, 0.4)"
+                : "rgba(160, 82, 45, 0.4)"
+            }
+          >
+            {item.type === "fire" ? (
+              <FireVector />
+            ) : item.type === "coffee" ? (
+              <CoffeeVector />
+            ) : (
+              <SekuaVector />
+            )}
+          </ParallaxItem>
+        ))}
+      </div>
     </div>
   );
 }
