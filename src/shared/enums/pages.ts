@@ -4,4 +4,5 @@ export enum Pages {
   RESTAURANT_SETTING = "restaurantSetting",
   MENU_ITEMS = "menuItems",
   RESTAURANT_TABLES = "restaurantTables",
+  PRODUCTS = "products",
 }

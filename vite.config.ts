@@ -32,7 +32,7 @@ export default defineConfig(({ mode }) => {
   };
 
   return {
-    plugins: [react(), tailwindCssConfig()],
+    plugins: [react()],
     test: {
       globals: true,
       environment: "jsdom",

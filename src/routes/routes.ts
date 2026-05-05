@@ -4,7 +4,7 @@ const routes = {
   report: "/report",
   login: "/login",
   chat: "/chat",
-  menuItems: "/menu-items",
+  products: "/products",
   settings: "/settings",
   accessDenied: "/access-denied",
   restaurantTables: {

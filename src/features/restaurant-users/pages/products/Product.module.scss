@@ -1,0 +1,9 @@
+@use "@shared/styles/colors.module.scss" as *;
+
+.active {
+  background-color: $primary;
+}
+
+:export {
+  primaryColor: $primary;
+}

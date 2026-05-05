@@ -15,7 +15,7 @@ const menuItems = [
     icon: <RestaurantTableIcon />,
   },
   { name: "settings", to: `${routes.settings}`, icon: <SettingIcon /> },
-  { name: "items", to: `${routes.menuItems}`, icon: <ItemIcon /> },
+  { name: "products", to: `${routes.products}`, icon: <ItemIcon /> },
 ];
 
 export const MenuItems = () => {
@@ -30,6 +30,9 @@ export const MenuItems = () => {
             </div>
           </NavItem>
         </div>
+      ))}
+      {menuItems.map((menu) => (
+        <div key={menu.name}></div>
       ))}
     </div>
   );

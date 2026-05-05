@@ -17,7 +17,7 @@ import LandingPage from "@/features/customer/pages/LandingPage";
 import RestaurantTables from "@/features/restaurant-users/pages/restaurant-tables/RestaurantTable";
 import { Dashboard } from "@/features/restaurant-users/pages/dashboard/Dashboard";
 import { Setting } from "@/features/restaurant-users/pages/settings/Setting";
-import { MenuItems } from "@/layout/components/side-bar/MenuItems";
+import { Product } from "@/features/restaurant-users/pages/products/Product";
 
 export const dataBrowserRouter = createBrowserRouter(
   createRoutesFromElements(
@@ -88,8 +88,8 @@ export const dataBrowserRouter = createBrowserRouter(
             element={<>This is chat page</>}
           />
           <Route
-            path={routes.menuItems}
-            element={<MenuItems />}
+            path={routes.products}
+            element={<Product />}
           />
           <Route
             path = {routes.restaurantTables.name}
