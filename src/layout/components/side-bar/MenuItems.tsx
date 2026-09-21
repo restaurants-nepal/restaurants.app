@@ -15,7 +15,7 @@ const menuItems = [
     icon: <RestaurantTableIcon />,
   },
   { name: "settings", to: `${routes.settings}`, icon: <SettingIcon /> },
-  { name: "products", to: `${routes.products}`, icon: <ItemIcon /> },
+  { name: "items", to: `${routes.products}`, icon: <ItemIcon /> },
 ];
 
 export const MenuItems = () => {

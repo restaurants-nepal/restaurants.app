@@ -10,7 +10,7 @@ const RestaurantTables = (): JSX.Element => {
   const restaurantTableId = useLocation().pathname.split("/").pop();
 
   // Services
-  const menuItems = useMenuItems(restaurantTableId || "");
+  // const menuItems = useMenuItems(restaurantTableId || "");
 
   // console.log("Restaurant Table ID:", menuItems);
 
