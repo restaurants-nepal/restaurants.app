@@ -1,5 +1,5 @@
 import { routes } from "@/routes/routes";
-import apiInstance from "@/shared/api/baseApi";
+// import apiInstance from "@/shared/api/baseApi";
 import { Modules } from "@/shared/enums/modules";
 import { PageHeader } from "@/shared/enums/page-header";
 import { Pages } from "@/shared/enums/pages";
