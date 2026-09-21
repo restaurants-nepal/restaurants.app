@@ -1,13 +1,12 @@
 import { routes } from "@/routes/routes";
 import useCan from "@/shared/hooks/useCan";
 import { useEffect, type JSX } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { useMenuItems } from "../../services/menu-items";
+import { useNavigate } from "react-router-dom";
 
 const RestaurantTables = (): JSX.Element => {
   const canViewRestaurantTable = useCan("page:restaurantTables");
   const navigate = useNavigate();
-  const restaurantTableId = useLocation().pathname.split("/").pop();
+  // const restaurantTableId = useLocation().pathname.split("/").pop();
 
   // Services
   // const menuItems = useMenuItems(restaurantTableId || "");

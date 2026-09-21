@@ -2,7 +2,6 @@
 
 import { defineConfig, loadEnv, type ServerOptions } from "vite";
 import react from "@vitejs/plugin-react";
-import tailwindCssConfig from "@tailwindcss/vite";
 import type { TMode } from "./src/shared/models/env-model";
 import type { AppEnv } from "./src/shared/models/app-env";
 import { validateEnv, normalizePort } from "./src/utils/functions/vite-config";

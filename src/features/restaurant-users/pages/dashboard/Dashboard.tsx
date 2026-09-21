@@ -5,7 +5,6 @@ import { PageHeader } from "@/shared/enums/page-header";
 import { Pages } from "@/shared/enums/pages";
 import useCan from "@/shared/hooks/useCan";
 import useNavigatePage from "@/shared/hooks/useNavigatePage";
-import { Restaurant } from "@/shared/services/restaurants/routes";
 import { useSharedStorage } from "@/shared/store/shared-store";
 import { useEffect, type JSX } from "react";
 import { useNavigate } from "react-router-dom";
@@ -17,9 +16,7 @@ const Dashboard = (): JSX.Element => {
 
   useEffect(() => {
     const fetchMenu = async () => {
-      console.log("fetching menu");
-      const res = await apiInstance.get(Restaurant.get(123));
-      console.log(res);
+      // const res = await apiInstance.get(Restaurant.get(123));
     };
     fetchMenu();
   }, []);
