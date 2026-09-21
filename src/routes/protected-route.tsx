@@ -1,23 +1,17 @@
 import type { PropsWithChildren } from "react";
-import { type JSX } from "react";
-import { Navigate } from "react-router-dom";
+import { useEffect, type JSX } from "react";
+import { useNavigate } from "react-router-dom";
 import { useIsAuthenticated } from "./auth";
+import { routes } from "./routes";
 
 export const ProtectedRoute = ({
   children,
 }: PropsWithChildren): JSX.Element => {
   const authenticated = useIsAuthenticated();
+  const navigate = useNavigate();
 
-  if (authenticated) {
-    return <>{children}</>;
-  }
-
-  return (
-    <Navigate
-      to={"/login"}
-      state={{
-        redirectUrl: window.location.pathname + window.location.search,
-      }}
-    />
-  );
+  useEffect(() => {
+    if (!authenticated) navigate(`${routes.login}`);
+  }, [navigate, authenticated]);
+  return <>{children}</>;
 };

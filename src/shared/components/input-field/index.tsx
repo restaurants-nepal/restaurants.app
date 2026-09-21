@@ -4,18 +4,19 @@ import { useState } from "react";
 
 const floatingStyles = defineStyle({
   pos: "absolute",
-  bg: "bg",
-  px: "0.5",
+  bg: "#271E40", // Calculated hex to perfectly match the modal's gradient + 6% white glassmorphism
+  px: "2",       // Slightly wider padding to comfortably cover the border line
   top: "2.5",
   insetStart: "3",
   fontWeight: "normal",
   pointerEvents: "none",
   transition: "position",
-  color: "fg.muted",
+  color: "white",
+  borderRadius: "sm",
   "&[data-float]": {
     top: "-3",
     insetStart: "2",
-    color: "fg",
+    color: "white",
   },
 });
 
@@ -33,6 +34,7 @@ const FloatingInput = (props: FloatingLabelInputProps) => {
         <InputGroup endElement={endElement}>
           <Input
             {...rest}
+            color="white"
             onFocus={(e) => {
               props.onFocus?.(e);
               setFocused(true);

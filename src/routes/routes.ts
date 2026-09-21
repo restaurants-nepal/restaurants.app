@@ -4,12 +4,22 @@ const routes = {
   report: "/report",
   login: "/login",
   chat: "/chat",
-  menuItems: "/menu-items",
+  products: "/products",
   settings: "/settings",
   accessDenied: "/access-denied",
+  restaurantTables: {
+    name: "/restaurant-tables",
+    params: {
+      name: "/:restaurant-id",
+    },
+  },
   admin: {
     name: "/admin",
     restaurants: "restaurants",
+  },
+  customer: {
+    name: "/customer",
+    landingPage: "landingPage",
   },
 };
 

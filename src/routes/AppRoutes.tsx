@@ -2,18 +2,22 @@ import {
   createBrowserRouter,
   createRoutesFromElements,
   Route,
+  Navigate,
 } from "react-router-dom";
 import { routes } from "./routes";
 import { ProtectedRoute } from "./protected-route";
 import { GlobalLayout } from "@/layout/GlobalLayout";
 import { HomeLayout } from "@/layout/components/main-content/MainContent";
-import { Dashboard } from "@/features/dashboard/pages/Dashboard";
 import { Login } from "@/features/auth/pages/Login";
 import { RootLayout } from "@/layout/components/root-layout/RootLayout";
-import { MenuItems } from "@/features/menu-items/pages/MenuItems";
-import { Setting } from "@/features/settings/pages/Setting";
 import AdminLayout from "@/layout/components/side-bar/admin/AdminLayout";
 import AdminRestaurant from "@/features/super-admin/pages/restaurant/Restaurant";
+import CustomerLayout from "@/features/customer/pages/CustomerLayout";
+import LandingPage from "@/features/customer/pages/LandingPage";
+import RestaurantTables from "@/features/restaurant-users/pages/restaurant-tables/RestaurantTable";
+import { Dashboard } from "@/features/restaurant-users/pages/dashboard/Dashboard";
+import { Setting } from "@/features/restaurant-users/pages/settings/Setting";
+import { Product } from "@/features/restaurant-users/pages/products/Product";
 
 export const dataBrowserRouter = createBrowserRouter(
   createRoutesFromElements(
@@ -21,21 +25,52 @@ export const dataBrowserRouter = createBrowserRouter(
       element={<GlobalLayout />}
       shouldRevalidate={() => true}
       errorElement={<>ERROR PAGE</>}>
+      {/* 🔓 Public */}
       <Route
         path={routes.login}
         element={<Login />}
       />
+
+      {/* 🍔 Restaurant Table */}
+      <Route
+        path={`${routes.restaurantTables.name}${routes.restaurantTables.params.name}`}
+        element={<RestaurantTables />}
+      />
+
+      {/* 🔐 Protected */}
       <Route
         element={
           <ProtectedRoute>
             <RootLayout />
           </ProtectedRoute>
         }>
-        <Route element={<HomeLayout />}>
+        {/* ✅ ROOT REDIRECT */}
+        <Route
+          path="/"
+          element={
+            <Navigate
+              to={routes.dashboard}
+              replace
+            />
+          }
+        />
+
+        {/* 👤 Customer Pages */}
+        <Route
+          path={routes.customer.name}
+          element={<CustomerLayout />}>
           <Route
-            path="/"
-            element={<Dashboard />}
+            path={routes.customer.landingPage}
+            element={<LandingPage />}
           />
+          <Route
+            path="*"
+            element={<LandingPage />}
+          />
+        </Route>
+
+        {/* 🏠 Main App Pages */}
+        <Route element={<HomeLayout />}>
           <Route
             path={routes.dashboard}
             element={<Dashboard />}
@@ -53,12 +88,16 @@ export const dataBrowserRouter = createBrowserRouter(
             element={<>This is chat page</>}
           />
           <Route
-            path={routes.menuItems}
-            element={<MenuItems />}
+            path={routes.products}
+            element={<Product />}
+          />
+          <Route
+            path = {routes.restaurantTables.name}
+            element={<RestaurantTables />}
           />
         </Route>
 
-        {/* Admin Pages  */}
+        {/* 👑 Admin Pages */}
         <Route
           path={routes.admin.name}
           element={<AdminLayout />}>

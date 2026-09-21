@@ -4,4 +4,6 @@ export enum Modules {
   DISCOUNT = "discount",
   CATEGORY = "category",
   PAGE = "page",
+  RESTAURANTS = "restaurants",
+  RESTAURANT_TABLE = "restaurantTable",
 }
