@@ -1,23 +1,34 @@
 import { SimpleGrid, Tabs } from "@chakra-ui/react";
 import { capitalize } from "lodash";
 import { useState, type JSX } from "react";
-
-const Headers = ["all", "drinks", "others"];
+import { useMenuItems } from "../../services/menu-items";
+import { useSharedStorage } from "@/shared/store/shared-store";
+import ProductRow from "./ProductRow";
 
 const ProductList = (): JSX.Element => {
-  const [activeTab, setActiveTab] = useState<string>("all");
+  const [activeTab, setActiveTab] = useState<string>("All");
+
+  const resId = useSharedStorage((state) => state.restaurantId) as number;
+  const menuItems = useMenuItems(resId.toString());
+
+  const filteredMenuItems = menuItems.data?.filter((item) => {
+    if (activeTab === "All") return true;
+    return item?.category === activeTab;
+  });
+
+  const headers = [
+    "All",
+    ...new Set(menuItems.data?.map((item) => item.category) ?? []),
+  ];
 
   return (
-    <SimpleGrid
-      columns={2}
-      gap="5"
-      width="full">
+    <SimpleGrid width="full">
       <Tabs.Root
         defaultValue={activeTab}
         variant="outline"
         onValueChange={(e) => setActiveTab(e.value)}>
         <Tabs.List>
-          {Headers.map((header) => (
+          {headers.map((header) => (
             <Tabs.Trigger
               _selected={{ bg: "brand.primary" }}
               key={header}
@@ -26,9 +37,17 @@ const ProductList = (): JSX.Element => {
             </Tabs.Trigger>
           ))}
         </Tabs.List>
-        <Tabs.Content value="all">These are al item</Tabs.Content>
-        <Tabs.Content value="drinks">These are drink item</Tabs.Content>
-        <Tabs.Content value="others">These are other item</Tabs.Content>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "16px",
+            marginTop: "16px",
+          }}>
+          {filteredMenuItems?.map((item) => (
+            <ProductRow item={item} />
+          ))}
+        </div>
       </Tabs.Root>
     </SimpleGrid>
   );

@@ -31,12 +31,6 @@ export const dataBrowserRouter = createBrowserRouter(
         element={<Login />}
       />
 
-      {/* 🍔 Restaurant Table */}
-      <Route
-        path={`${routes.restaurantTables.name}${routes.restaurantTables.params.name}`}
-        element={<RestaurantTables />}
-      />
-
       {/* 🔐 Protected */}
       <Route
         element={
@@ -92,7 +86,7 @@ export const dataBrowserRouter = createBrowserRouter(
             element={<Product />}
           />
           <Route
-            path = {routes.restaurantTables.name}
+            path={routes.restaurantTables.name}
             element={<RestaurantTables />}
           />
         </Route>

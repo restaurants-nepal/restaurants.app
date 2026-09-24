@@ -33,7 +33,7 @@ export const useSharedStorage = create<SharedStorageStore>()(
       reset: () => set(initialState),
     }),
     {
-      name: LocalStorageKeys.AUTH, // ✅ single localStorage key
+      name: LocalStorageKeys.STATE, // ✅ single localStorage key
     },
   ),
 );

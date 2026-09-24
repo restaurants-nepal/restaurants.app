@@ -15,8 +15,6 @@ export const useRestaurant = (restaurantId?: number): Restaurant => {
     fetcher,
   );
 
-
-
   useEffect(() => {
     if (error?.response?.status === 401) {
       console.warn("⚠️ Unauthorized! Redirecting to login...");
