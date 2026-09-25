@@ -1,5 +1,6 @@
 import { routes } from "@/routes/routes";
 import useCan from "@/shared/hooks/useCan";
+import { useSharedStorage } from "@/shared/store/shared-store";
 import {
   Badge,
   Box,
@@ -22,97 +23,50 @@ import {
   UsersRound,
   Utensils,
 } from "lucide-react";
-import { useEffect, useMemo, useState, type JSX } from "react";
+import { useEffect, useState, type JSX } from "react";
 import { useNavigate } from "react-router-dom";
+import { useResTables } from "../../services/res-table";
 
-type TableStatus = "Occupied" | "Reserved" | "Dirty" | "Open" | "Selected";
+type TableStatus = "occupied" | "reserved" | "available" | "needs_cleaning";
 
-type Table = {
-  number: string;
-  status: TableStatus;
-  detailLabel: string;
-  detail: string;
-  guests?: string;
-  duration?: string;
-  action?: string;
-  tone: "blue" | "indigo" | "red" | "gray";
-};
-
-const tables: Table[] = [
-  {
-    number: "12",
-    status: "Occupied",
-    detailLabel: "Server",
-    detail: "Marcus R.",
-    guests: "4/4",
-    duration: "42m",
-    tone: "blue",
+const statusColors = {
+  available: {
+    bg: "#e6f9f4",
+    color: "#0b5e4f",
+    border: "#00b37e",
+    numberBg: "#00b37e",
+    numberColor: "#ffffff",
   },
-  {
-    number: "08",
-    status: "Reserved",
-    detailLabel: "Guest",
-    detail: "Harrington Party",
-    guests: "6",
-    duration: "19:30",
-    tone: "indigo",
+  occupied: {
+    bg: "#e7eaff",
+    color: "#4d42d8",
+    border: "#5548ed",
+    numberBg: "#5145e5",
+    numberColor: "#ffffff",
   },
-  {
-    number: "22",
-    status: "Dirty",
-    detailLabel: "Status",
-    detail: "Needs Busser",
-    action: "Priority",
-    tone: "red",
+  reserved: {
+    bg: "#fff5d9",
+    color: "#a35400",
+    border: "#f59b00",
+    numberBg: "#f6a000",
+    numberColor: "#ffffff",
   },
-  {
-    number: "15",
-    status: "Open",
-    detailLabel: "Capacity",
-    detail: "2 Persons",
-    action: "Ready for seating",
-    tone: "gray",
+  needs_cleaning: {
+    bg: "#ffe4e9",
+    color: "#c5294b",
+    border: "#ff4667",
+    numberBg: "#f63d60",
+    numberColor: "#ffffff",
   },
-  {
-    number: "04",
-    status: "Occupied",
-    detailLabel: "Server",
-    detail: "Elena K.",
-    guests: "2/4",
-    duration: "18m",
-    tone: "blue",
-  },
-  {
-    number: "21",
-    status: "Selected",
-    detailLabel: "Server",
-    detail: "Marcus R.",
-    guests: "8/8",
-    duration: "1h 12m",
-    tone: "indigo",
-  },
-];
-
-const statusColors: Record<TableStatus, { bg: string; color: string }> = {
-  Occupied: { bg: "#eef1ff", color: "#445ac4" },
-  Reserved: { bg: "#f1f2f8", color: "#5c6380" },
-  Dirty: { bg: "#fff1f0", color: "#c22020" },
-  Open: { bg: "#eef0f3", color: "#676d79" },
-  Selected: { bg: "#e3e8ff", color: "#334bb3" },
-};
-
-const accentColors = {
-  blue: { border: "#445bc6", numberBg: "#e0e6ff", numberColor: "#3c55bf" },
-  indigo: { border: "#4d5d93", numberBg: "#bbc8ff", numberColor: "#344dba" },
-  red: { border: "#c91d1d", numberBg: "#ffd9d6", numberColor: "#c51e1e" },
-  gray: { border: "#e8e8e8", numberBg: "#f0f0f2", numberColor: "#686d77" },
 };
 
 const RestaurantTables = (): JSX.Element => {
   const canViewRestaurantTable = useCan("page:restaurantTables");
   const navigate = useNavigate();
-  const [activeStatus, setActiveStatus] = useState<"All" | TableStatus>("All");
+  const [activeStatus, setActiveStatus] = useState<"all" | TableStatus>("all");
   const [search, setSearch] = useState("");
+  const resId = useSharedStorage((state) => state.restaurantId) as number;
+  const { data: resTables } = useResTables(resId.toString());
 
   useEffect(() => {
     if (!canViewRestaurantTable) {
@@ -120,27 +74,24 @@ const RestaurantTables = (): JSX.Element => {
     }
   }, [navigate, canViewRestaurantTable]);
 
-  const visibleTables = useMemo(
-    () =>
-      tables.filter((table) => {
-        const matchesStatus =
-          activeStatus === "All" || table.status === activeStatus;
-        const query = search.toLowerCase();
-        return (
-          matchesStatus &&
-          (table.number.includes(query) ||
-            table.detail.toLowerCase().includes(query))
-        );
-      }),
-    [activeStatus, search],
-  );
+  // const visibleTables = useMemo(
+  //   () =>
+  //     resTables.filter((table) => {
+  //       const matchesStatus =
+  //         activeStatus === "All" || table.status === activeStatus;
+  //       const query = search.toLowerCase();
+  //       return (
+  //         matchesStatus &&
+  //         (table.number.includes(query) ||
+  //           table.detail.toLowerCase().includes(query))
+  //       );
+  //     }),
+  //   [activeStatus, search],
+  // );
 
   return (
     <Box
       minH="100%"
-      bg="#f8f9fc"
-      px={{ base: 4, md: 8 }}
-      py={{ base: 5, md: 8 }}
       color="#171b2d">
       <Flex
         align="flex-start"
@@ -212,22 +163,28 @@ const RestaurantTables = (): JSX.Element => {
           justify={{ base: "flex-start", lg: "flex-end" }}
           align="center"
           overflowX="auto">
-          {(["All", "Occupied", "Reserved", "Open", "Dirty"] as const).map(
-            (status) => (
-              <Button
-                key={status}
-                size="sm"
-                flexShrink={0}
-                borderRadius="full"
-                bg={activeStatus === status ? "#4056bd" : "white"}
-                color={activeStatus === status ? "white" : "#69718a"}
-                border="1px solid"
-                borderColor={activeStatus === status ? "#4056bd" : "#e8ebf2"}
-                onClick={() => setActiveStatus(status)}>
-                {status}
-              </Button>
-            ),
-          )}
+          {(
+            [
+              "all",
+              "occupied",
+              "reserved",
+              "available",
+              "needs_cleaning",
+            ] as const
+          ).map((status) => (
+            <Button
+              key={status}
+              size="sm"
+              flexShrink={0}
+              borderRadius="full"
+              bg={activeStatus === status ? "#4056bd" : "white"}
+              color={activeStatus === status ? "white" : "#69718a"}
+              border="1px solid"
+              borderColor={activeStatus === status ? "#4056bd" : "#e8ebf2"}
+              onClick={() => setActiveStatus(status)}>
+              {status}
+            </Button>
+          ))}
           <IconButton
             aria-label="Table settings"
             variant="outline"
@@ -250,7 +207,7 @@ const RestaurantTables = (): JSX.Element => {
             mt={1}
             color="#8a91a5"
             fontSize="sm">
-            {visibleTables.length} tables shown · Updated just now
+            {resTables?.length} tables shown · Updated just now
           </Text>
         </Box>
         <IconButton
@@ -264,20 +221,24 @@ const RestaurantTables = (): JSX.Element => {
       <SimpleGrid
         columns={{ base: 1, sm: 2, xl: 3 }}
         gap={{ base: 4, md: 5 }}>
-        {visibleTables.map((table) => {
-          const accent = accentColors[table.tone];
+        {resTables?.map((table, index) => {
           const status = statusColors[table.status];
-          const isOpen = table.status === "Open";
-          const isDirty = table.status === "Dirty";
+          const isAvailable = table.status === "available";
+          const isDirty = table.status === "needs_cleaning";
           return (
             <Box
-              key={table.number}
+              key={table.id}
               minH="208px"
               bg="white"
               borderRadius="2xl"
-              borderBottom="4px solid"
-              borderColor={accent.border}
-              boxShadow="0 10px 25px rgba(44, 54, 94, 0.05)"
+              border="2px solid"
+              borderColor={status.border}
+              boxShadow="0 8px 20px rgba(44, 54, 94, 0.06)"
+              transition="transform 180ms ease, box-shadow 180ms ease"
+              _hover={{
+                transform: "translateY(-5px)",
+                boxShadow: `0 14px 30px ${status.border}40`,
+              }}
               px={{ base: 5, md: 6 }}
               py={5}>
               <Flex
@@ -287,16 +248,16 @@ const RestaurantTables = (): JSX.Element => {
                   align="center"
                   gap={2.5}>
                   <Flex
-                    w="45px"
+                    w="150px"
                     h="45px"
                     align="center"
                     justify="center"
                     borderRadius="9px"
-                    bg={accent.numberBg}
-                    color={accent.numberColor}
+                    bg={status.numberBg}
+                    color={status.numberColor}
                     fontSize="lg"
                     fontWeight="700">
-                    {table.number}
+                    {table.display_name}
                   </Flex>
                   <Badge
                     px={3}
@@ -311,7 +272,7 @@ const RestaurantTables = (): JSX.Element => {
                   </Badge>
                 </Flex>
                 <IconButton
-                  aria-label={`Actions for table ${table.number}`}
+                  aria-label={`Actions for table ${table.display_name}`}
                   size="xs"
                   variant="ghost"
                   color="#9aa0b0">
@@ -327,14 +288,14 @@ const RestaurantTables = (): JSX.Element => {
                   fontSize="10px"
                   letterSpacing="0.08em"
                   textTransform="uppercase">
-                  {table.detailLabel}
+                  Detail Label
                 </Text>
                 <Text
                   mt={1}
                   fontSize="md"
                   fontWeight="600"
-                  color={isOpen ? "#5f6570" : "#151927"}>
-                  {table.detail}
+                  color={isAvailable ? "#075343" : "#151927"}>
+                  Details
                 </Text>
               </Stack>
 
@@ -342,11 +303,11 @@ const RestaurantTables = (): JSX.Element => {
                 mt={4}
                 pt={4}
                 borderTop="1px solid #f0f1f5">
-                {table.guests ? (
+                {index !== 1 ? (
                   <Flex
                     align="center"
                     gap={5}
-                    color={isDirty ? "#c22020" : accent.numberColor}
+                    color={isDirty ? status.color : status.border}
                     fontSize="sm"
                     fontWeight="600">
                     <Flex
@@ -356,7 +317,7 @@ const RestaurantTables = (): JSX.Element => {
                         size={19}
                         strokeWidth={1.8}
                       />
-                      {table.guests}
+                      Guests
                     </Flex>
                     <Flex
                       align="center"
@@ -365,18 +326,22 @@ const RestaurantTables = (): JSX.Element => {
                         size={19}
                         strokeWidth={1.8}
                       />
-                      {table.duration}
+                      20 mins
                     </Flex>
                   </Flex>
                 ) : (
                   <Flex
                     align="center"
                     gap={2}
-                    color={isDirty ? "#c22020" : "#9297a2"}
+                    color={isDirty ? status.color : status.border}
                     fontSize="sm"
-                    fontStyle={isOpen ? "italic" : "normal"}>
-                    {isDirty ? <Utensils size={18} /> : null}
-                    <Text>{table.action}</Text>
+                    fontStyle={isAvailable ? "italic" : "normal"}>
+                    <Utensils size={18} />
+                    {table.status === "available" ? (
+                      "Ready for sitting"
+                    ) : (
+                      <Text>Action</Text>
+                    )}
                   </Flex>
                 )}
               </Box>

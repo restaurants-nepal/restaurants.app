@@ -9,11 +9,7 @@ import {
   Switch,
   Text,
 } from "@chakra-ui/react";
-import {
-  PencilSquareIcon,
-  TrashIcon,
-  ClipboardDocumentCheckIcon,
-} from "@heroicons/react/24/outline";
+import { PencilSquareIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { Clock } from "lucide-react";
 import type { MenuItemModel } from "@/shared/models/menu-item/menu-item-model";
 
