@@ -36,8 +36,6 @@ apiInstance.interceptors.request.use(
 // Response Interceptor to handle responses globally
 apiInstance.interceptors.response.use(
   (response: AxiosResponse) => {
-    console.log("LOGGING", response);
-
     return response;
   },
   (error: AxiosError) => {

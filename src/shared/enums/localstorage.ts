@@ -4,6 +4,7 @@ enum LocalStorageKeys {
   POLICIES = "policies",
   TOKEN = "token",
   AUTH = "auth",
+  STATE = "state",
 }
 
 export { LocalStorageKeys };

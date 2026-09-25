@@ -1,4 +1,7 @@
-const MenuItems = {
-  get: (tableId: string) => `/v1/restaurant-tables/${tableId}`,
+export const MenuItems = {
+  get: (resId: string) => `/v1/menuitems/${resId}`,
 };
-export { MenuItems };
+
+export const ResTables = {
+  get: (resId: string) => `/v1/tables/${resId}`,
+};
