@@ -4,6 +4,7 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
+import { Center, Spinner, Text } from "@chakra-ui/react";
 import { routes } from "./routes";
 import { ProtectedRoute } from "./protected-route";
 import { GlobalLayout } from "@/layout/GlobalLayout";
@@ -14,10 +15,12 @@ import AdminLayout from "@/layout/components/side-bar/admin/AdminLayout";
 import AdminRestaurant from "@/features/super-admin/pages/restaurant/Restaurant";
 import CustomerLayout from "@/features/customer/pages/CustomerLayout";
 import LandingPage from "@/features/customer/pages/LandingPage";
+import TableMenuPage from "@/features/customer/pages/TableMenuPage";
 import RestaurantTables from "@/features/restaurant-users/pages/restaurant-tables/RestaurantTable";
 import { Dashboard } from "@/features/restaurant-users/pages/dashboard/Dashboard";
 import { Setting } from "@/features/restaurant-users/pages/settings/Setting";
 import { Product } from "@/features/restaurant-users/pages/products/Product";
+import { tableMenuItemsLoader } from "@/features/customer/pages/common/data-loading/table-menu-item-loader";
 
 export const dataBrowserRouter = createBrowserRouter(
   createRoutesFromElements(
@@ -29,6 +32,25 @@ export const dataBrowserRouter = createBrowserRouter(
       <Route
         path={routes.login}
         element={<Login />}
+      />
+      <Route
+        path="/table/:token"
+        element={<TableMenuPage />}
+        loader={tableMenuItemsLoader}
+        hydrateFallbackElement={
+          <Center
+            minH="100dvh"
+            flexDirection="column"
+            gap="4"
+            bg="gray.50">
+            <Spinner
+              size="xl"
+              color="brand.primary"
+              aria-label="Loading table menu"
+            />
+            <Text color="gray.600">Preparing your table menu...</Text>
+          </Center>
+        }
       />
 
       {/* 🔐 Protected */}
