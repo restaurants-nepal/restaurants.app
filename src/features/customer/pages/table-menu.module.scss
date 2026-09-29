@@ -2,6 +2,7 @@
 
 .page {
   min-height: 100vh;
+  padding-bottom: 92px;
   background: #f5f6f8;
   color: #171923;
   font-family: "DM Sans", sans-serif;
@@ -146,6 +147,11 @@
 .filterBar,
 .categoryBar {
   background: #fff;
+}
+.categoryBar {
+  position: sticky;
+  top: 65px;
+  z-index: 9;
 }
 .filterBar {
   border-bottom: 1px solid #f0f0f3;
@@ -318,6 +324,7 @@
 }
 .menuCard {
   min-width: 0;
+  padding: 10px;
   overflow: hidden;
   background: #fff;
   border: 1px solid #eceef2;
@@ -333,7 +340,6 @@
 .photoFrame {
   position: relative;
   aspect-ratio: 1.78;
-  margin: 9px 9px 0;
   overflow: hidden;
   border-radius: 5px;
   background: #e8e9eb;
@@ -344,6 +350,10 @@
   display: block;
   object-fit: cover;
   transition: opacity 0.2s ease;
+}
+
+.cardBody {
+  margin: 5px 0px;
 }
 .badges {
   position: absolute;
@@ -396,7 +406,7 @@
   padding: 4px 6px;
   border-radius: 4px;
   background: #141821b8;
-  color: white;
+  color: red;
   font-size: 8px;
 }
 .metaRow {
@@ -499,6 +509,55 @@
   border-radius: 9px;
   scrollbar-width: thin;
 }
+.orderActionBar {
+  position: fixed;
+  z-index: 15;
+  right: 10px;
+  bottom: 10px;
+  left: 10px;
+  width: min(760px, calc(100% - 20px));
+  margin: 0 auto;
+}
+.orderReview {
+  max-height: min(70dvh, 720px);
+  margin-bottom: 8px;
+  overflow-y: auto;
+  box-shadow: 0 12px 36px #1c21302b;
+}
+.orderHeading > button {
+  flex: 0 0 auto;
+  min-width: 28px;
+  min-height: 28px;
+  padding: 5px;
+  color: #6e7481;
+}
+.orderActionToggle {
+  width: 100%;
+  min-height: 54px;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border: 0;
+  border-radius: 7px;
+  background: #4056b7;
+  color: #fff;
+  box-shadow: 0 7px 24px #202b5538;
+  cursor: pointer;
+}
+.orderActionToggle > span {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 12px;
+}
+.orderActionToggle strong {
+  font-size: 12px;
+}
+.orderActionToggle:hover {
+  background: #30469f;
+}
 .orderHeading {
   display: flex;
   align-items: flex-start;
@@ -564,10 +623,27 @@
   min-height: 69px;
   padding: 9px 8px 7px;
   display: grid;
-  grid-template-columns: 1fr auto;
+  grid-template-columns: 40px minmax(0, 1fr) auto;
   gap: 3px 8px;
   background: #f6f7f9;
   border-radius: 6px;
+}
+.orderItemImage {
+  width: 40px;
+  height: 40px;
+  margin-top: 5px;
+  display: grid;
+  grid-row: 1;
+  place-items: center;
+  overflow: hidden;
+  border-radius: 4px;
+  background: #e8eaf0;
+  color: #7784c8;
+}
+.orderItemImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 .orderItemInfo {
   min-width: 0;
@@ -781,7 +857,7 @@
 .toast {
   position: fixed;
   right: 22px;
-  bottom: 22px;
+  bottom: 82px;
   z-index: 20;
   max-width: min(420px, calc(100vw - 32px));
   padding: 12px 14px;
@@ -869,13 +945,12 @@
     width: 100%;
   }
   .waiterButton {
-    position: fixed;
-    right: 14px;
-    bottom: 14px;
-    z-index: 12;
+    position: static;
+    grid-column: 1 / -1;
+    grid-row: 3;
+    justify-self: end;
     height: 44px;
     padding: 0 15px;
-    box-shadow: 0 5px 16px #25377b45;
   }
   .filterInner {
     min-height: 43px;
@@ -896,7 +971,7 @@
     display: none;
   }
   .content {
-    padding: 13px 12px 80px;
+    padding: 13px 12px 24px;
   }
   .menuColumn {
     width: 100%;
@@ -950,6 +1025,19 @@
   .orderPanel {
     width: 100%;
     padding: 13px;
+  }
+  .orderActionBar {
+    right: 10px;
+    bottom: 10px;
+    left: 10px;
+  }
+  .orderReview {
+    max-height: 68dvh;
+    padding: 12px;
+  }
+  .orderActionToggle {
+    min-height: 50px;
+    padding: 0 12px;
   }
   .orderHeading h2 {
     font-size: 14px;
