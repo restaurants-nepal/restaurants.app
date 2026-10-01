@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "@chakra-ui/react": "^3.30.0",
+    "@emotion/react": "^11.14.0",
     "@heroicons/react": "^2.2.0",
     "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.5.0",
@@ -38,6 +39,7 @@
     "zustand": "^5.0.9"
   },
   "devDependencies": {
+    "@chakra-ui/cli": "^3.37.0",
     "@commitlint/cli": "^20.1.0",
     "@commitlint/config-conventional": "^20.0.0",
     "@eslint/js": "^9.39.1",

@@ -21,6 +21,9 @@ const useNavigatePage = () => {
         case Roles.CUSTOMER:
           navigate(`${routes.customer.name}/${routes.customer.landingPage}`);
           break;
+        default:
+          navigate(`${routes.dashboard}`);
+          break;
       }
     },
     [navigate],

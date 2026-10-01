@@ -9,12 +9,15 @@ import { useSharedStorage } from "@/shared/store/shared-store";
 import { Notification } from "./Notification";
 import { useRestaurant } from "@/shared/services/restaurants/get-restaurant";
 import { Text } from "@chakra-ui/react";
+import { Tooltip } from "@/shared/components/tooltip/tooltip";
+import { useNotificationStore } from "@/shared/store/notification-store";
 
 const TopBar = (): JSX.Element => {
   // storage
   const restaurantId = useSharedStorage((state) => state.restaurantId);
   const fullName = useSharedStorage((state) => state.fullName);
   const reset = useSharedStorage((state) => state.reset);
+  const role = useSharedStorage((state) => state.user?.role);
 
   const data = useRestaurant(restaurantId);
   // Functions
@@ -23,7 +26,10 @@ const TopBar = (): JSX.Element => {
     reset();
     navigate(routes.login);
   };
+  const notifications = useNotificationStore((state) => state.notifications);
+
   const MenuItems = [{ label: "Logout", key: "logout", action: logoutHandler }];
+
   return (
     <nav className={styles.mainContainer}>
       <Flex>
@@ -36,7 +42,11 @@ const TopBar = (): JSX.Element => {
       </Flex>
       <div className={styles.leftContent}>
         <Notification />
-        <div className={styles.userName}>{`${fullName || ""}`}</div>
+        <Tooltip
+          content={role}
+          showArrow>
+          <div className={styles.userName}>{`${fullName || ""}`}</div>
+        </Tooltip>
         <Menu.Root>
           <Menu.Trigger asChild>
             <button className={styles.dropIcon}>

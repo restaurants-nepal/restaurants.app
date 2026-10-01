@@ -1,10 +1,28 @@
-import { Bell } from "@/assets/icons/Bell";
+import { useNotificationStore } from "@/shared/store/notification-store";
+import { Box, Badge } from "@chakra-ui/react";
+import { Bell } from "lucide-react";
 
 const Notification = () => {
+  const notifications = useNotificationStore((state) => state.notifications);
   return (
-    <div>
+    <Box
+      position="relative"
+      display="inline-block">
       <Bell />
-    </div>
+      {notifications?.length > 0 && (
+        <Badge
+          position="absolute"
+          top="-2"
+          right="3"
+          color="red"
+          colorScheme="red"
+          borderRadius="full"
+          size="xs"
+          px={1.5}>
+          {notifications.length}
+        </Badge>
+      )}
+    </Box>
   );
 };
 

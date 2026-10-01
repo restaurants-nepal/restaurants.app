@@ -18,7 +18,7 @@ interface OrderActionBarProps {
   onConfirm: () => void;
 }
 
-const formatPrice = (price: number) => `$${price.toFixed(2)}`;
+const formatPrice = (price: number) => `Rs: ${price.toFixed(2)}`;
 
 const OrderActionBar = ({ tableName, onConfirm }: OrderActionBarProps) => {
   const orderItems = useOrderStore((state) => state.orderItems);

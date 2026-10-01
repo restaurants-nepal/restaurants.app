@@ -3,7 +3,7 @@
 
 .mainContainer {
   background-color: $primary;
-  height: 30px;
+  height: 40px;
   display: flex;
   align-items: center;
   box-shadow: 10px 3px 10px #888888;
@@ -13,6 +13,8 @@
   .topBarLeftContent {
     margin-left: 120px;
     color: $secondary;
+    font-size: 1.3rem;
+    font-weight: bold;
   }
 
   .homeIcon,
@@ -33,6 +35,7 @@
     .userName {
       color: $white;
       margin-right: 10px;
+      cursor: default;
     }
   }
 }

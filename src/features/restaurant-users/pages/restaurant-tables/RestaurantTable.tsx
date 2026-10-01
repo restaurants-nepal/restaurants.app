@@ -26,6 +26,8 @@ import {
 import { useEffect, useState, type JSX } from "react";
 import { useNavigate } from "react-router-dom";
 import { useResTables } from "../../services/res-table";
+import { socket } from "@/shared/api/socket";
+import { useNotificationStore } from "@/shared/store/notification-store";
 
 type TableStatus = "occupied" | "reserved" | "available" | "needs_cleaning";
 
@@ -67,6 +69,10 @@ const RestaurantTables = (): JSX.Element => {
   const [search, setSearch] = useState("");
   const resId = useSharedStorage((state) => state.restaurantId) as number;
   const { data: resTables } = useResTables(resId.toString());
+  const notifications = useNotificationStore((state) => state.notifications);
+  const addNotification = useNotificationStore(
+    (state) => state.addNotification,
+  );
 
   useEffect(() => {
     if (!canViewRestaurantTable) {
@@ -88,6 +94,35 @@ const RestaurantTables = (): JSX.Element => {
   //     }),
   //   [activeStatus, search],
   // );
+
+  // Socket
+  useEffect(() => {
+    socket.connect();
+
+    socket.emit("waiter:join", {
+      resId,
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, [resId]);
+
+  useEffect(() => {
+    const handleWaiterCall = (data) => {
+      addNotification({
+        message: data?.message,
+        id: (notifications.length + 1).toString(),
+      });
+      // Show notification
+    };
+
+    socket.on("waiter:called", handleWaiterCall);
+
+    return () => {
+      socket.off("waiter:called", handleWaiterCall);
+    };
+  }, []);
 
   return (
     <Box
@@ -227,7 +262,7 @@ const RestaurantTables = (): JSX.Element => {
           const isDirty = table.status === "needs_cleaning";
           return (
             <Box
-              key={table.id}
+              key={`table-${table.id}-${index}`}
               minH="208px"
               bg="white"
               borderRadius="2xl"

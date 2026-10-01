@@ -19,8 +19,9 @@ import { useShallow } from "zustand/react/shallow";
 import type { MenuItemModel } from "@/shared/models/menu-item/menu-item-model";
 import { useOrderStore } from "@/features/customer/store/order-store";
 import OrderActionBar from "@/features/customer/components/OrderActionBar";
+import { socket } from "@/shared/api/socket";
 
-const formatPrice = (price: number) => `$${price.toFixed(2)}`;
+const formatPrice = (price: number) => `Rs: ${price.toFixed(2)}`;
 
 const TableMenuPage = () => {
   // Real Code
@@ -65,6 +66,25 @@ const TableMenuPage = () => {
   const orderItems = useOrderStore((state) => state.orderItems);
   const changeQuantity = useOrderStore((state) => state.changeQuantity);
   const setReviewOpen = useOrderStore((state) => state.setReviewOpen);
+  const resId = useSharedStorage((state) => state.restaurantId);
+
+  useEffect(() => {
+    socket.connect();
+
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
+
+  useEffect(() => {
+    socket.emit("waiter:join", {
+      resId,
+    });
+
+    return () => {
+      socket.off("waiter:called");
+    };
+  }, [resId]);
 
   const filteredItems = resMenuItems?.filter((item) => {
     const matchesSearch = `${item.name} ${item.description}`
@@ -89,6 +109,15 @@ const TableMenuPage = () => {
   if (navigation.state === "loading") {
     return <div>Loading menu...</div>;
   }
+
+  const handleCallWaiter = () => {
+    // Send the event to the server with table info
+    socket.emit("customer:call-waiter", {
+      resId,
+      tableNumber: tableName,
+      timestamp: new Date().toLocaleTimeString(),
+    });
+  };
 
   return (
     <Box
@@ -139,11 +168,12 @@ const TableMenuPage = () => {
             variant="plain"
             className={styles.waiterButton}
             type="button"
-            onClick={() =>
+            onClick={() => {
               setFeedback(
                 "A waiter has been notified and will be with you shortly.",
-              )
-            }>
+              );
+              handleCallWaiter();
+            }}>
             <BellRing size={15} />
             <span>Call waiter</span>
           </Button>
