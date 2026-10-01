@@ -7,4 +7,5 @@ export interface Restaurant {
   latitude: string;
   longitude: string;
   is_active: boolean;
+  id: number;
 }

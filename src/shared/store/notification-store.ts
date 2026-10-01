@@ -10,7 +10,7 @@ interface UserSlice {
 
 interface Notification {
   message: string;
-  id: string;
+  tableId: string;
 }
 
 interface NotificationSlice {

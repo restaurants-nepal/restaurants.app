@@ -15,6 +15,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 import {
+  Circle,
   Clock3,
   MoreHorizontal,
   Plus,
@@ -69,10 +70,12 @@ const RestaurantTables = (): JSX.Element => {
   const [search, setSearch] = useState("");
   const resId = useSharedStorage((state) => state.restaurantId) as number;
   const { data: resTables } = useResTables(resId.toString());
+  console.log("resTables", resTables);
   const notifications = useNotificationStore((state) => state.notifications);
   const addNotification = useNotificationStore(
     (state) => state.addNotification,
   );
+  console.log("resTables", resTables);
 
   useEffect(() => {
     if (!canViewRestaurantTable) {
@@ -112,7 +115,7 @@ const RestaurantTables = (): JSX.Element => {
     const handleWaiterCall = (data) => {
       addNotification({
         message: data?.message,
-        id: (notifications.length + 1).toString(),
+        tableId: data?.tableId,
       });
       // Show notification
     };
@@ -260,6 +263,9 @@ const RestaurantTables = (): JSX.Element => {
           const status = statusColors[table.status];
           const isAvailable = table.status === "available";
           const isDirty = table.status === "needs_cleaning";
+          const hasNotification = notifications?.some(
+            (n) => +n.tableId === +table.id,
+          );
           return (
             <Box
               key={`table-${table.id}-${index}`}
@@ -311,7 +317,10 @@ const RestaurantTables = (): JSX.Element => {
                   size="xs"
                   variant="ghost"
                   color="#9aa0b0">
-                  <MoreHorizontal size={17} />
+                  <Circle
+                    color={hasNotification ? "red" : "transparent"}
+                    size={17}
+                  />
                 </IconButton>
               </Flex>
 

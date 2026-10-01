@@ -66,7 +66,7 @@ const TableMenuPage = () => {
   const orderItems = useOrderStore((state) => state.orderItems);
   const changeQuantity = useOrderStore((state) => state.changeQuantity);
   const setReviewOpen = useOrderStore((state) => state.setReviewOpen);
-  const resId = useSharedStorage((state) => state.restaurantId);
+  const resId = restaurant?.id;
 
   useEffect(() => {
     socket.connect();
@@ -114,6 +114,7 @@ const TableMenuPage = () => {
     // Send the event to the server with table info
     socket.emit("customer:call-waiter", {
       resId,
+      tableId: table?.id,
       tableNumber: tableName,
       timestamp: new Date().toLocaleTimeString(),
     });
