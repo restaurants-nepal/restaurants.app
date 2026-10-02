@@ -2,7 +2,11 @@ import type { AppEnv } from "../../shared/models/app-env";
 import type { TMode } from "../../shared/models/env-model";
 
 export const validateEnv = (envMode: TMode, env: AppEnv) => {
-  const requiredVars: (keyof AppEnv)[] = ["PORT", "VITE_ENV", "BACKEND_URL"];
+  const requiredVars: (keyof AppEnv)[] = [
+    "PORT",
+    "VITE_ENV",
+    "VITE_BACKEND_URL",
+  ];
 
   const missingVars = requiredVars.filter((varName) => !(varName in env));
 

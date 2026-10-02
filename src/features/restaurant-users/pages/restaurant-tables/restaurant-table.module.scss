@@ -1,0 +1,16 @@
+.notificationPulse {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: notification-pulse 1s ease-in-out infinite;
+}
+
+@keyframes notification-pulse {
+  0%,
+  100% {
+    transform: scale(0);
+  }
+
+  50% {
+    transform: scale(1);
+  }
+}

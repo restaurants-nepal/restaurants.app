@@ -27,8 +27,8 @@ import {
 import { useEffect, useState, type JSX } from "react";
 import { useNavigate } from "react-router-dom";
 import { useResTables } from "../../services/res-table";
-import { socket } from "@/shared/api/socket";
 import { useNotificationStore } from "@/shared/store/notification-store";
+import styles from "./restaurant-table.module.scss";
 
 type TableStatus = "occupied" | "reserved" | "available" | "needs_cleaning";
 
@@ -70,12 +70,7 @@ const RestaurantTables = (): JSX.Element => {
   const [search, setSearch] = useState("");
   const resId = useSharedStorage((state) => state.restaurantId) as number;
   const { data: resTables } = useResTables(resId.toString());
-  console.log("resTables", resTables);
   const notifications = useNotificationStore((state) => state.notifications);
-  const addNotification = useNotificationStore(
-    (state) => state.addNotification,
-  );
-  console.log("resTables", resTables);
 
   useEffect(() => {
     if (!canViewRestaurantTable) {
@@ -99,33 +94,6 @@ const RestaurantTables = (): JSX.Element => {
   // );
 
   // Socket
-  useEffect(() => {
-    socket.connect();
-
-    socket.emit("waiter:join", {
-      resId,
-    });
-
-    return () => {
-      socket.disconnect();
-    };
-  }, [resId]);
-
-  useEffect(() => {
-    const handleWaiterCall = (data) => {
-      addNotification({
-        message: data?.message,
-        tableId: data?.tableId,
-      });
-      // Show notification
-    };
-
-    socket.on("waiter:called", handleWaiterCall);
-
-    return () => {
-      socket.off("waiter:called", handleWaiterCall);
-    };
-  }, []);
 
   return (
     <Box
@@ -320,6 +288,9 @@ const RestaurantTables = (): JSX.Element => {
                   <Circle
                     color={hasNotification ? "red" : "transparent"}
                     size={17}
+                    className={
+                      hasNotification ? styles.notificationPulse : undefined
+                    }
                   />
                 </IconButton>
               </Flex>

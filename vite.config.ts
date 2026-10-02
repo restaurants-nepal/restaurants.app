@@ -19,7 +19,7 @@ export default defineConfig(({ mode }) => {
     open: true,
     proxy: {
       "/api": {
-        target: env.BACKEND_URL,
+        target: env.VITE_BACKEND_URL,
         changeOrigin: true,
         rewrite: (path) => {
           // Remove /api prefix and keep the rest of the path

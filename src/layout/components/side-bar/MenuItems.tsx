@@ -25,8 +25,8 @@ export const MenuItems = () => {
         <div key={menu.name}>
           <NavItem to={menu.to}>
             <div className={styles.navItem}>
-              <div>{menu.icon}</div>
-              <div>{startCase(menu.name)}</div>
+              <div className={styles.navIcon}>{menu.icon}</div>
+              <div className={styles.navLabel}>{startCase(menu.name)}</div>
             </div>
           </NavItem>
         </div>
