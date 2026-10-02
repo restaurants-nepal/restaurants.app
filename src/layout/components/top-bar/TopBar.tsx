@@ -34,6 +34,9 @@ const TopBar = (): JSX.Element => {
   const addNotification = useNotificationStore(
     (state) => state.addNotification,
   );
+  const removeNotification = useNotificationStore(
+    (state) => state.removeNotification,
+  );
 
   useEffect(() => {
     if (isWaiter) {
@@ -55,15 +58,20 @@ const TopBar = (): JSX.Element => {
         message: data?.message,
         tableId: data?.tableId,
       });
-      // Show notification
+    };
+
+    const handleWaiterCallDismissed = (data) => {
+      removeNotification(data?.tableId);
     };
 
     socket.on("waiter:called", handleWaiterCall);
+    socket.on("waiter:call-dismissed", handleWaiterCallDismissed);
 
     return () => {
       socket.off("waiter:called", handleWaiterCall);
+      socket.off("waiter:call-dismissed", handleWaiterCallDismissed);
     };
-  }, [addNotification]);
+  }, [addNotification, removeNotification]);
 
   const MenuItems = [{ label: "Logout", key: "logout", action: logoutHandler }];
 

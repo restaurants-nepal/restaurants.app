@@ -16,6 +16,7 @@ interface Notification {
 interface NotificationSlice {
   notifications: Notification[];
   addNotification: (notification: Notification) => void;
+  removeNotification: (tableId: string) => void;
 }
 
 interface ThemeSlice {
@@ -45,11 +46,30 @@ export const useNotificationStore = create<StoreState>()(
         ...initialNotificationState,
         addNotification: (notification) =>
           set(
-            (state) => ({
-              notifications: [...state.notifications, notification],
-            }),
+            (state) => {
+              if (
+                !state.notifications.some(
+                  (n) => n.tableId === notification.tableId,
+                )
+              ) {
+                return {
+                  notifications: [...state.notifications, notification],
+                };
+              }
+              return state;
+            },
             false,
             "addNotification",
+          ),
+        removeNotification: (tableId: string) =>
+          set(
+            (state) => ({
+              notifications: state.notifications.filter(
+                (n) => n.tableId !== tableId,
+              ),
+            }),
+            false,
+            "removeNotification",
           ),
 
         // Theme Slice

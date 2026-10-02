@@ -1,12 +1,16 @@
+import { socket } from "@/shared/api/socket";
 import { useNotificationStore } from "@/shared/store/notification-store";
+import { useSharedStorage } from "@/shared/store/shared-store";
 import { Box, Badge, Float, Menu, Portal, Icon } from "@chakra-ui/react";
 import { Bell, X } from "lucide-react";
 import { useState } from "react";
 
 const Notification = () => {
   const notifications = useNotificationStore((state) => state.notifications);
+  const resId = useSharedStorage((state) => state.restaurantId);
   const [open, setOpen] = useState(false);
-  const handleNotification = (tableId: string) => {
+  const handleDismissNotification = (tableId: string) => {
+    socket.emit("dismiss-waiter-call", { tableId, resId });
     const hasNotification = notifications?.length > 0;
     setOpen(hasNotification);
   };
@@ -55,7 +59,9 @@ const Notification = () => {
                       size="15"
                       color="red"
                       cursor="pointer"
-                      onClick={() => handleNotification(notification.tableId)}
+                      onClick={() =>
+                        handleDismissNotification(notification.tableId)
+                      }
                     />
                   </Menu.Item>
                 ))

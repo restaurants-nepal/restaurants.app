@@ -63,10 +63,18 @@ const TableMenuPage = () => {
   const [activeCategory, setActiveCategory] = useState("All Items");
   const [photoIndexes, setPhotoIndexes] = useState<Record<number, number>>({});
   const [feedback, setFeedback] = useState("");
+  const [waiterCalled, setWaiterCalled] = useState(false);
   const orderItems = useOrderStore((state) => state.orderItems);
   const changeQuantity = useOrderStore((state) => state.changeQuantity);
   const setReviewOpen = useOrderStore((state) => state.setReviewOpen);
   const resId = restaurant?.id;
+
+  useEffect(() => {
+    if (!waiterCalled) return;
+
+    const timeoutId = window.setTimeout(() => setWaiterCalled(false), 3000);
+    return () => window.clearTimeout(timeoutId);
+  }, [waiterCalled]);
 
   useEffect(() => {
     socket.connect();
@@ -169,14 +177,13 @@ const TableMenuPage = () => {
             variant="plain"
             className={styles.waiterButton}
             type="button"
+            disabled={waiterCalled}
             onClick={() => {
-              setFeedback(
-                "A waiter has been notified and will be with you shortly.",
-              );
+              setWaiterCalled(true);
               handleCallWaiter();
             }}>
             <BellRing size={15} />
-            <span>Call waiter</span>
+            <span>{waiterCalled ? "Waiter called" : "Call waiter"}</span>
           </Button>
         </Flex>
       </Box>
