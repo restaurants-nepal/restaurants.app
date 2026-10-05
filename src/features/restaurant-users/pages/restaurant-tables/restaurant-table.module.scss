@@ -1,6 +1,8 @@
 .notificationPulse {
   transform-box: fill-box;
   transform-origin: center;
+  background-color: red;
+  border-radius: 50%;
   animation: notification-pulse 1s ease-in-out infinite;
 }
 

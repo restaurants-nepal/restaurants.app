@@ -698,6 +698,38 @@
   color: #777e8c;
   font-size: 8px;
 }
+.guestDetails {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 12px;
+}
+.guestField {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 5px;
+  color: #35415f;
+  font-size: 9px;
+  font-weight: 700;
+}
+.guestInput {
+  width: 100%;
+  min-height: 34px;
+  padding: 7px 8px;
+  border: 1px solid #e8eaf0;
+  border-radius: 5px;
+  outline: 0;
+  color: #303645;
+  font: inherit;
+  font-size: 10px;
+}
+.guestInput:focus {
+  border-color: #8290d0;
+}
+.guestInput::placeholder {
+  color: #a0a5af;
+}
 .requestLabel {
   display: flex;
   align-items: center;

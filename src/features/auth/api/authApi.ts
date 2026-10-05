@@ -1,10 +1,13 @@
 import type { IApiResponse } from "@/shared/models/api/api-response";
 import type { LoginModel } from "../models/login-model";
-import type { LoginResponse } from "../models/login-response";
+import type {
+  LoginErrorResponse,
+  LoginResponse,
+} from "../models/login-response";
 
 export const UserLogin = async (
   credentials: LoginModel,
-): Promise<IApiResponse<LoginResponse>> => {
+): Promise<IApiResponse<LoginResponse & LoginErrorResponse>> => {
   return fetch("api/v1/user/login", {
     method: "POST",
     headers: {

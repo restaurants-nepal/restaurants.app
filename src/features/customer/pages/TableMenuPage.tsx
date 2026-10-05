@@ -20,6 +20,7 @@ import type { MenuItemModel } from "@/shared/models/menu-item/menu-item-model";
 import { useOrderStore } from "@/features/customer/store/order-store";
 import OrderActionBar from "@/features/customer/components/OrderActionBar";
 import { socket } from "@/shared/api/socket";
+import { CreateCustomerOrder } from "../services/order";
 
 const formatPrice = (price: number) => `Rs: ${price.toFixed(2)}`;
 
@@ -126,6 +127,15 @@ const TableMenuPage = () => {
       tableNumber: tableName,
       timestamp: new Date().toLocaleTimeString(),
     });
+  };
+
+  const createOrder = async (order) => {
+    const res = await CreateCustomerOrder(order);
+    if (res.statusCode === 200) {
+      console.log("Order created successfully:", res.data);
+    } else {
+      console.error("Error creating order:", res.message);
+    }
   };
 
   return (
@@ -383,7 +393,32 @@ const TableMenuPage = () => {
       </Grid>
       <OrderActionBar
         tableName={tableName}
-        onConfirm={() => {
+        onConfirm={async () => {
+          const order = useOrderStore.getState();
+          await createOrder({
+            resId,
+            tableId: table?.id,
+            tableNumber: tableName,
+            customerName: order.customerName.trim() || null,
+            customerPhone: order.customerPhone.trim() || null,
+            items: order.orderItems.map((item) => ({
+              menuItemId: item.id,
+              quantity: item.qty,
+            })),
+            kitchenRequest: order.kitchenRequest,
+          });
+          socket.emit("customer:place-order", {
+            resId,
+            tableId: table?.id,
+            tableNumber: tableName,
+            customerName: order.customerName.trim() || null,
+            customerPhone: order.customerPhone.trim() || null,
+            items: order.orderItems.map((item) => ({
+              menuItemId: item.id,
+              quantity: item.qty,
+            })),
+            kitchenRequest: order.kitchenRequest,
+          });
           setFeedback("Your order has been sent to the kitchen.");
           setReviewOpen(false);
         }}

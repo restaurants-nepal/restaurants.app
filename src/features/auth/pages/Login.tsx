@@ -31,6 +31,7 @@ const Login = () => {
   const setSharedStorage = useSharedStorage((state) => state.setSharedStorage);
   const user = useSharedStorage((state) => state.user);
   const isAuthenticated = useIsAuthenticated();
+  const [error, setError] = useState<{ errorMessage: string } | null>(null);
 
   // ── Mouse tracking ──
   const mouseRef = useRef({ x: 0, y: 0, px: -1000, py: -1000 });
@@ -65,13 +66,18 @@ const Login = () => {
       if (response.statusCode === 200) {
         setSharedStorage((state) => {
           state.fullName = fullName ?? null;
-          state.user = user ?? null;
+          state.user = user ?? undefined;
           state.policies = policies ?? [];
           state.token = token ?? null;
           state.restaurantId = restaurantId;
         });
-        navigateByRole(user?.role);
+        if (user?.role) {
+          navigateByRole(user.role as Roles);
+        }
       } else {
+        setError({
+          errorMessage: response?.message ?? "Login failed",
+        });
         console.log("Error while login: ", response?.data);
       }
     } catch (error) {
@@ -92,8 +98,7 @@ const Login = () => {
 
   return (
     <div
-      className={`${styles.loginContainer} ${isInsideModal ? "" : styles.hideCursor}`}
-    >
+      className={`${styles.loginContainer} ${isInsideModal ? "" : styles.hideCursor}`}>
       {/* Custom cursor (hidden when inside modal) */}
       <CustomCursor isInsideModal={isInsideModal} />
 
@@ -104,8 +109,7 @@ const Login = () => {
       <div
         className={styles.content}
         onMouseEnter={handleModalEnter}
-        onMouseLeave={handleModalLeave}
-      >
+        onMouseLeave={handleModalLeave}>
         <div className={styles.image}>
           <Image
             borderRadius="full"
@@ -132,16 +136,20 @@ const Login = () => {
               value={password}
               maxLength={20}
               onChange={({ target }) => setPassword(target.value)}
+              invalid={error?.errorMessage ? true : false}
+              errorMessage={error?.errorMessage}
               endElement={
                 <div
                   className={styles.passwordBtn}
-                  onClick={() => setShowPassword((prev) => !prev)}
-                >
+                  onClick={() => setShowPassword((prev) => !prev)}>
                   {showPassword ? <Eye /> : <Hide />}
                 </div>
               }
             />
-            <Button disabled={isLoading} colorPalette={"blue"} type="submit">
+            <Button
+              disabled={isLoading}
+              colorPalette={"blue"}
+              type="submit">
               Submit
             </Button>
           </VStack>

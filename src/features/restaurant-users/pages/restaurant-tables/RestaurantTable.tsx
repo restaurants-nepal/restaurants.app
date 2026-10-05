@@ -6,6 +6,7 @@ import {
   Box,
   Button,
   Flex,
+  Float,
   Grid,
   Heading,
   IconButton,
@@ -234,6 +235,7 @@ const RestaurantTables = (): JSX.Element => {
           const hasNotification = notifications?.some(
             (n) => +n.tableId === +table.id,
           );
+
           return (
             <Box
               key={`table-${table.id}-${index}`}
@@ -256,18 +258,32 @@ const RestaurantTables = (): JSX.Element => {
                 <Flex
                   align="center"
                   gap={2.5}>
-                  <Flex
-                    w="150px"
-                    h="45px"
-                    align="center"
-                    justify="center"
-                    borderRadius="9px"
-                    bg={status.numberBg}
-                    color={status.numberColor}
-                    fontSize="lg"
-                    fontWeight="700">
-                    {table.display_name}
-                  </Flex>
+                  <Box>
+                    <Flex
+                      position="relative"
+                      w="150px"
+                      h="45px"
+                      align="center"
+                      justify="center"
+                      borderRadius="9px 0 9px 0"
+                      bg={status.numberBg}
+                      color={status.numberColor}
+                      fontSize="lg"
+                      fontWeight="700">
+                      {table.display_name}
+                      <Float>
+                        <Circle
+                          color={hasNotification ? "red" : "transparent"}
+                          size={10}
+                          className={
+                            hasNotification
+                              ? styles.notificationPulse
+                              : undefined
+                          }
+                        />
+                      </Float>
+                    </Flex>
+                  </Box>
                   <Badge
                     px={3}
                     py={1.5}
@@ -284,15 +300,7 @@ const RestaurantTables = (): JSX.Element => {
                   aria-label={`Actions for table ${table.display_name}`}
                   size="xs"
                   variant="ghost"
-                  color="#9aa0b0">
-                  <Circle
-                    color={hasNotification ? "red" : "transparent"}
-                    size={17}
-                    className={
-                      hasNotification ? styles.notificationPulse : undefined
-                    }
-                  />
-                </IconButton>
+                  color="#9aa0b0"></IconButton>
               </Flex>
 
               <Stack

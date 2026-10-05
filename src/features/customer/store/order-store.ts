@@ -1,5 +1,16 @@
 import { create } from "zustand";
 import type { MenuItemModel } from "@/shared/models/menu-item/menu-item-model";
+import { LocalStorageKeys } from "@/shared/enums/localstorage";
+
+const getStoredCustomerValue = (key: string, fallbackKey?: string) => {
+  if (typeof localStorage === "undefined") return "";
+
+  return (
+    localStorage.getItem(key) ??
+    (fallbackKey ? localStorage.getItem(fallbackKey) : null) ??
+    ""
+  );
+};
 
 export interface OrderItem extends MenuItemModel {
   qty: number;
@@ -8,16 +19,25 @@ export interface OrderItem extends MenuItemModel {
 interface OrderStore {
   orderItems: OrderItem[];
   kitchenRequest: string;
+  customerName: string;
+  customerPhone: string;
   isReviewOpen: boolean;
   changeQuantity: (item: MenuItemModel, amount: number) => void;
   setItemQuantity: (itemId: number, quantity: number) => void;
   setKitchenRequest: (request: string) => void;
+  setCustomerName: (name: string) => void;
+  setCustomerPhone: (phone: string) => void;
   setReviewOpen: (isOpen: boolean) => void;
 }
 
 export const useOrderStore = create<OrderStore>((set) => ({
   orderItems: [],
   kitchenRequest: "",
+  customerName: getStoredCustomerValue(
+    LocalStorageKeys.CUSTOMER_NAME,
+    LocalStorageKeys.FULL_NAME,
+  ),
+  customerPhone: getStoredCustomerValue(LocalStorageKeys.CUSTOMER_PHONE),
   isReviewOpen: false,
   changeQuantity: (item, amount) =>
     set((state) => {
@@ -54,5 +74,13 @@ export const useOrderStore = create<OrderStore>((set) => ({
             ),
     })),
   setKitchenRequest: (kitchenRequest) => set({ kitchenRequest }),
+  setCustomerName: (customerName) => {
+    localStorage.setItem(LocalStorageKeys.CUSTOMER_NAME, customerName);
+    set({ customerName });
+  },
+  setCustomerPhone: (customerPhone) => {
+    localStorage.setItem(LocalStorageKeys.CUSTOMER_PHONE, customerPhone);
+    set({ customerPhone });
+  },
   setReviewOpen: (isReviewOpen) => set({ isReviewOpen }),
 }));

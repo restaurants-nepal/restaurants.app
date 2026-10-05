@@ -6,4 +6,6 @@ export interface FloatingLabelInputProps extends InputProps {
   defaultValue?: string | undefined;
   onValueChange?: ((value: string) => void) | undefined;
   endElement?: React.ReactElement;
+  invalid?: boolean;
+  errorMessage?: string;
 }

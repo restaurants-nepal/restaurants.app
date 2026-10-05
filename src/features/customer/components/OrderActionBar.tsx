@@ -1,4 +1,4 @@
-import { Button, Textarea } from "@chakra-ui/react";
+import { Button, Input, Textarea } from "@chakra-ui/react";
 import {
   ArrowRight,
   Check,
@@ -23,10 +23,14 @@ const formatPrice = (price: number) => `Rs: ${price.toFixed(2)}`;
 const OrderActionBar = ({ tableName, onConfirm }: OrderActionBarProps) => {
   const orderItems = useOrderStore((state) => state.orderItems);
   const kitchenRequest = useOrderStore((state) => state.kitchenRequest);
+  const customerName = useOrderStore((state) => state.customerName);
+  const customerPhone = useOrderStore((state) => state.customerPhone);
   const isReviewOpen = useOrderStore((state) => state.isReviewOpen);
   const changeQuantity = useOrderStore((state) => state.changeQuantity);
   const setItemQuantity = useOrderStore((state) => state.setItemQuantity);
   const setKitchenRequest = useOrderStore((state) => state.setKitchenRequest);
+  const setCustomerName = useOrderStore((state) => state.setCustomerName);
+  const setCustomerPhone = useOrderStore((state) => state.setCustomerPhone);
   const setReviewOpen = useOrderStore((state) => state.setReviewOpen);
   const itemCount = orderItems.reduce((total, item) => total + item.qty, 0);
   const subtotal = orderItems.reduce(
@@ -116,6 +120,30 @@ const OrderActionBar = ({ tableName, onConfirm }: OrderActionBarProps) => {
               </div>
             ))
           )}
+        </div>
+        <div className={styles.guestDetails}>
+          <label className={styles.guestField}>
+            <span>Name (optional)</span>
+            <Input
+              className={styles.guestInput}
+              type="text"
+              autoComplete="name"
+              placeholder="Your name"
+              value={customerName}
+              onChange={(event) => setCustomerName(event.target.value)}
+            />
+          </label>
+          <label className={styles.guestField}>
+            <span>Phone number (optional)</span>
+            <Input
+              className={styles.guestInput}
+              type="tel"
+              autoComplete="tel"
+              placeholder="Your phone number"
+              value={customerPhone}
+              onChange={(event) => setCustomerPhone(event.target.value)}
+            />
+          </label>
         </div>
         <label
           className={styles.requestLabel}

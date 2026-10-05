@@ -5,7 +5,7 @@ import { useState } from "react";
 const floatingStyles = defineStyle({
   pos: "absolute",
   bg: "#271E40", // Calculated hex to perfectly match the modal's gradient + 6% white glassmorphism
-  px: "2",       // Slightly wider padding to comfortably cover the border line
+  px: "2", // Slightly wider padding to comfortably cover the border line
   top: "2.5",
   insetStart: "3",
   fontWeight: "normal",
@@ -21,13 +21,13 @@ const floatingStyles = defineStyle({
 });
 
 const FloatingInput = (props: FloatingLabelInputProps) => {
-  const { label, value, endElement, ...rest } = props;
+  const { label, value, endElement, invalid, errorMessage, ...rest } = props;
 
   const [focused, setFocused] = useState(false);
   const shouldFloat = value?.length || 0 > 0 || focused;
 
   return (
-    <Field.Root>
+    <Field.Root invalid={invalid}>
       <Box
         pos="relative"
         w="full">
@@ -63,6 +63,7 @@ const FloatingInput = (props: FloatingLabelInputProps) => {
           {label}
         </Field.Label>
       </Box>
+      {invalid && <Field.ErrorText>{errorMessage}</Field.ErrorText>}
     </Field.Root>
   );
 };
