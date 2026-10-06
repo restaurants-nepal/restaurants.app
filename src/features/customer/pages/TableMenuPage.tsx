@@ -130,6 +130,7 @@ const TableMenuPage = () => {
   };
 
   const createOrder = async (order) => {
+    console.log("Logging order to be created:", order);
     const res = await CreateCustomerOrder(order);
     if (res.statusCode === 200) {
       console.log("Order created successfully:", res.data);
