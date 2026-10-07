@@ -8,3 +8,20 @@ export interface CustomerOrderModel {
   items: MenuItemModel[];
   note?: string;
 }
+
+export interface CustomerOrderHistoryItem {
+  name: string;
+  price: number;
+  quantity: number;
+  subTotal: number;
+}
+
+export interface CustomerOrderHistory {
+  orderNumber: string;
+  menuItems: CustomerOrderHistoryItem[];
+  subTotal: number;
+  totalAmount: number;
+  discountAmount: number;
+  taxAmount: number;
+  orderDate: string;
+}

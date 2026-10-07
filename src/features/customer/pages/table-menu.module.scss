@@ -518,6 +518,17 @@
   width: min(760px, calc(100% - 20px));
   margin: 0 auto;
 }
+.orderBackdrop {
+  position: fixed;
+  z-index: 14;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: #12182766;
+  backdrop-filter: blur(4px);
+  cursor: default;
+}
 .orderReview {
   max-height: min(70dvh, 720px);
   margin-bottom: 8px;
@@ -595,6 +606,88 @@
   display: flex;
   flex-direction: column;
   gap: 7px;
+}
+.orderTabs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 4px;
+  margin-bottom: 12px;
+  padding: 3px;
+  border-radius: 6px;
+  background: #f4f5f8;
+}
+.orderTabs button {
+  min-height: 32px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: #697080;
+  font: inherit;
+  font-size: 10px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.orderTabs .orderTabActive {
+  background: #fff;
+  color: #4056b7;
+  box-shadow: 0 1px 4px #202b5518;
+}
+.previousOrders {
+  display: flex;
+  max-height: 50dvh;
+  flex-direction: column;
+  gap: 8px;
+  overflow-y: auto;
+}
+.previousOrder {
+  padding: 10px;
+  border: 1px solid #eceef2;
+  border-radius: 6px;
+  background: #fff;
+}
+.previousOrderHeading,
+.previousOrderItem,
+.previousOrderTotal {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.previousOrderHeading {
+  margin-bottom: 8px;
+}
+.previousOrderHeading strong {
+  color: #303645;
+  font-size: 10px;
+}
+.previousOrderHeading span,
+.previousOrderItem,
+.previousOrderTotal {
+  color: #747a87;
+  font-size: 9px;
+}
+.previousOrderItems {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #eceef2;
+}
+.previousOrderItem span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.previousOrderItem strong {
+  flex: 0 0 auto;
+  color: #454b59;
+  font-size: 9px;
+}
+.previousOrderTotal {
+  margin-top: 6px;
+}
+.previousOrderTotal strong {
+  color: #303645;
+  font-size: 10px;
 }
 .cartEmpty {
   min-height: 94px;
@@ -701,7 +794,7 @@
 .guestDetails {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px;
+  gap: 5px;
   margin-top: 12px;
 }
 .guestField {
@@ -710,11 +803,11 @@
   flex-direction: column;
   gap: 5px;
   color: #35415f;
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 700;
 }
 .guestInput {
-  width: 100%;
+  width: 90%;
   min-height: 34px;
   padding: 7px 8px;
   border: 1px solid #e8eaf0;
@@ -722,7 +815,7 @@
   outline: 0;
   color: #303645;
   font: inherit;
-  font-size: 10px;
+  font-size: 12px;
 }
 .guestInput:focus {
   border-color: #8290d0;
